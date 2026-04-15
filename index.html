@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI API Platform</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0a0f1a;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: transparent;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .gradient-border {
+      position: relative;
+      background: #111827;
+      border-radius: 16px;
+    }
+    .gradient-border::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #a855f7);
+      opacity: 0.5;
+      z-index: -1;
+    }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: rgba(139, 92, 246, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 18px;
+      margin-bottom: 60px;
+    }
+
+    .gradient-line {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 2px;
+      margin: 16px auto 0;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 64px;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(10, 15, 26, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom-color: rgba(139, 92, 246, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+    .navbar-logo:hover { opacity: 0.8; }
+    .navbar-logo img {
+      width: 36px;
+      height: 36px;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .navbar-links li a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+    }
+    .navbar-links li a:hover {
+      color: #fff;
+      background: rgba(139, 92, 246, 0.1);
+    }
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .navbar-actions .btn-secondary {
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+    .navbar-actions .btn-primary {
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #fff;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .navbar-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(10, 15, 26, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        padding: 16px;
+        gap: 4px;
+      }
+      .navbar-links.mobile-open {
+        display: flex;
+      }
+      .navbar-links li {
+        width: 100%;
+      }
+      .navbar-links li a {
+        display: block;
+        padding: 12px 16px;
+        font-size: 16px;
+      }
+      .navbar-actions {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 80px;
+    }
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      padding: 60px 0;
+    }
+    .hero-left { flex: 1.2; max-width: 620px; }
+    .hero-left h1 {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .hero-desc { font-size: 17px; color: #94a3b8; line-height: 1.8; margin-bottom: 32px; }
+    .hero-buttons { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .api-box { padding: 20px 24px; }
+    .api-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .api-box-header span:first-child { font-size: 14px; color: #94a3b8; }
+    .api-tag {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+    .api-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .api-row:last-child { border-bottom: none; }
+    .api-row code {
+      font-family: "SF Mono", Consolas, monospace;
+      font-size: 13px;
+      color: #60a5fa;
+    }
+    .copy-btn {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #a855f7;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { background: rgba(139, 92, 246, 0.4); }
+    .copy-btn.copied { background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.3); color: #22c55e; }
+    .hero-right { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 300px; }
+
+    /* Stats */
+    .hero-stats { padding: 40px 0; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-item { padding: 24px; }
+    .stat-number {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label { font-size: 14px; color: #94a3b8; }
+
+    @media (max-width: 1024px) {
+      .hero-inner { flex-direction: column; text-align: center; }
+      .hero-left { max-width: 100%; }
+      .hero-buttons { justify-content: center; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .stat-number { font-size: 28px; }
+    }
+
+    /* Features */
+    .features { padding: 100px 0; position: relative; z-index: 1; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .feature-card { padding: 28px 20px; text-align: center; }
+    .feature-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+    .feature-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+
+    /* Models */
+    .models { padding: 100px 0; position: relative; z-index: 1; background: rgba(17, 24, 39, 0.5); }
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+    .model-item {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      filter: grayscale(100%);
+      opacity: 0.6;
+      min-height: 100px;
+    }
+    .model-item:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-4px);
+    }
+    .model-logo { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .model-name { font-size: 13px; color: #94a3b8; text-align: center; }
+
+    /* Reviews */
+    .reviews { padding: 100px 0; position: relative; z-index: 1; }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .review-card { padding: 24px; }
+    .review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .review-info { display: flex; flex-direction: column; }
+    .review-name { font-weight: 600; font-size: 15px; }
+    .review-role { font-size: 12px; color: #94a3b8; }
+    .review-stars { color: #f59e0b; font-size: 14px; letter-spacing: 2px; margin-bottom: 8px; }
+    .review-text { font-size: 14px; color: #94a3b8; line-height: 1.7; }
+
+    /* Partner */
+    .partner { padding: 100px 0; position: relative; z-index: 1; background: rgba(17, 24, 39, 0.5); }
+    .partner-advantages {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+    .partner-card { text-align: center; padding: 32px 20px; }
+    .partner-icon { font-size: 48px; margin-bottom: 16px; }
+    .partner-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .partner-card p { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+    .partner-requirements { max-width: 760px; margin: 0 auto 60px; text-align: center; }
+    .partner-requirements h3 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+    .partner-requirements ol {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 40px;
+      text-align: left;
+      padding: 0;
+      color: #94a3b8;
+    }
+    .partner-requirements li {
+      position: relative;
+      padding: 10px 0 10px 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 15px;
+    }
+    .partner-requirements li::before {
+      content: counter(list-item);
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .partner-flow { text-align: center; margin-bottom: 40px; }
+    .partner-flow h3 { font-size: 24px; font-weight: 700; margin-bottom: 32px; }
+    .flow-steps { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .flow-step { text-align: center; }
+    .flow-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 auto 8px;
+    }
+    .flow-label { font-size: 14px; color: #94a3b8; }
+    .flow-arrow { font-size: 24px; color: #8b5cf6; }
+
+    /* Footer */
+    .footer {
+      padding: 40px 0;
+      border-top: 1px solid #1f2937;
+      position: relative;
+      z-index: 1;
+      background: rgba(10, 15, 26, 0.8);
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 2fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .footer-brand span {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-brand p, .footer-contact p, .footer-copy p, .footer-links a { color: #94a3b8; font-size: 14px; }
+    .footer-links { display: flex; flex-direction: column; gap: 12px; }
+    .footer-copy { text-align: right; }
+
+    @media (max-width: 1024px) {
+      .features-grid, .partner-advantages { grid-template-columns: repeat(2, 1fr); }
+      .models-grid { grid-template-columns: repeat(3, 1fr); }
+      .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .partner-requirements ol { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .footer-copy { text-align: left; }
+    }
+    @media (max-width: 480px) {
+      .features-grid, .partner-advantages, .reviews-grid, .footer-inner { grid-template-columns: 1fr; }
+      .models-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles-canvas"></canvas>
+
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="navbar-logo">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='18' fill='%238b5cf6'/%3E%3Cpath d='M12 18 Q18 10 24 18 Q18 26 12 18Z' fill='white'/%3E%3C/svg%3E" alt="Logo" />
+        <span>AI Platform</span>
+      </a>
+      <ul class="navbar-links">
+        <li><a href="#hero">首页</a></li>
+        <li><a href="./dashboard.html">控制台</a></li>
+        <li><a href="#models">模型广场</a></li>
+        <li><a href="#reviews">文档</a></li>
+        <li><a href="#partner">关于</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <a class="btn-secondary" href="./login.html">登录</a>
+        <a class="btn-primary" href="./login.html">注册</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="container hero-inner">
+      <div class="hero-left">
+        <h1><span class="gradient-text">AI API 中转服务</span><br>为 AI 时代而生</h1>
+        <p class="hero-desc">一站式 AI 模型接入平台，统一管理多家大模型供应商，简化集成流程，让您专注于构建创新应用，兼容 OpenAI 格式，支持 GPT、Claude、Gemini、DeepSeek 等主流模型</p>
+        <div class="hero-buttons">
+          <a class="btn-primary" href="./login.html">立即开始 →</a>
+          <a class="btn-secondary" href="./dashboard.html">进入控制台</a>
+        </div>
+        <div class="api-box gradient-border">
+          <div class="api-box-header">
+            <span>API 配置接口地址</span>
+            <span class="api-tag">优先使用</span>
+          </div>
+          <div class="api-row">
+            <code id="apiUrl1">https://your-domain.com/v1</code>
+            <button class="copy-btn" onclick="copyApiUrl('apiUrl1')">复制</button>
+          </div>
+          <div class="api-row">
+            <code id="apiUrl2">https://your-domain.com/v1/chat/completions</code>
+            <button class="copy-btn" onclick="copyApiUrl('apiUrl2')">复制</button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <!-- Dynamic visual effect handled by canvas background -->
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="container stats-grid">
+        <div class="stat-item fade-in">
+          <div class="stat-number" data-target="99.9">0</div>
+          <div class="stat-label">服务可用率</div>
+        </div>
+        <div class="stat-item fade-in">
+          <div class="stat-number" data-target="500" data-suffix="+">0</div>
+          <div class="stat-label">支持模型</div>
+        </div>
+        <div class="stat-item fade-in">
+          <div class="stat-number" data-target="99" data-prefix="<" data-suffix="ms">0</div>
+          <div class="stat-label">平均响应</div>
+        </div>
+        <div class="stat-item fade-in">
+          <div class="stat-number" data-target="7" data-suffix="×24h">0</div>
+          <div class="stat-label">技术支持</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">为什么选择我们</h2>
+      <div class="gradient-line"></div>
+      <p class="section-subtitle">全方位能力支持，让 AI 开发更简单</p>
+      <div class="features-grid">
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">🚀</span>
+          <h3 class="feature-title">极速响应</h3>
+          <p class="feature-desc">自研智能路由，国内节点优化</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">🛡️</span>
+          <h3 class="feature-title">稳定可靠</h3>
+          <p class="feature-desc">99.9% 可用率保障</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">💰</span>
+          <h3 class="feature-title">价格实惠</h3>
+          <p class="feature-desc">比官方更低还有赠送</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">🔗</span>
+          <h3 class="feature-title">兼容性强</h3>
+          <p class="feature-desc">完全兼容 OpenAI API</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">🌐</span>
+          <h3 class="feature-title">模型丰富</h3>
+          <p class="feature-desc">500+ 主流模型</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">👨‍💻</span>
+          <h3 class="feature-title">技术支持</h3>
+          <p class="feature-desc">7×24 小时在线</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">📊</span>
+          <h3 class="feature-title">用量清晰</h3>
+          <p class="feature-desc">实时统计明细</p>
+        </div>
+        <div class="feature-card card fade-in">
+          <span class="feature-icon">🔒</span>
+          <h3 class="feature-title">安全合规</h3>
+          <p class="feature-desc">隐私保护</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="models" id="models">
+    <div class="container">
+      <h2 class="section-title">热门模型</h2>
+      <div class="gradient-line"></div>
+      <p class="section-subtitle">精选业界领先大模型，满足各类场景需求</p>
+      <div class="models-grid">
+        <div class="model-item fade-in"><div class="model-logo">🤖</div><span class="model-name">OpenAI</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🧠</div><span class="model-name">Anthropic</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🔵</div><span class="model-name">DeepSeek</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🌿</div><span class="model-name">Google</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🦾</div><span class="model-name">Meta</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🌊</div><span class="model-name">Mistral</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🌙</div><span class="model-name">Moonshot</span></div>
+        <div class="model-item fade-in"><div class="model-logo">❌</div><span class="model-name">xAI</span></div>
+        <div class="model-item fade-in"><div class="model-logo">📱</div><span class="model-name">字节跳动</span></div>
+        <div class="model-item fade-in"><div class="model-logo">💎</div><span class="model-name">智谱 AI</span></div>
+        <div class="model-item fade-in"><div class="model-logo">🐉</div><span class="model-name">阿里巴巴</span></div>
+        <div class="model-item fade-in"><div class="model-logo">✨</div><span class="model-name">更多模型</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <h2 class="section-title">用户评价</h2>
+      <div class="gradient-line"></div>
+      <p class="section-subtitle">来自开发者和企业的真实反馈</p>
+      <div class="reviews-grid">
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">张</div><div class="review-info"><span class="review-name">张先生</span><span class="review-role">开发者</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">响应速度很快，比直接用官方 API 便宜太多了！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">李</div><div class="review-info"><span class="review-name">李女士</span><span class="review-role">产品经理</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">技术支持响应很及时，有问题都能快速解决！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">王</div><div class="review-info"><span class="review-name">王老板</span><span class="review-role">企业用户</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">公司一直在用，稳定性很好，模型种类也很全！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">赵</div><div class="review-info"><span class="review-name">赵工程师</span><span class="review-role">技术总监</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">接入非常方便，改个地址就能用！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">陈</div><div class="review-info"><span class="review-name">陈同学</span><span class="review-role">学生</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">学生党表示价格很友好，足够日常使用！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">刘</div><div class="review-info"><span class="review-name">刘经理</span><span class="review-role">项目经理</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">给团队每人配了账号，效率提升明显！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">周</div><div class="review-info"><span class="review-name">周站长</span><span class="review-role">站长</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">做了他们代理，返利很可观，平台也很靠谱！</p></div>
+        <div class="review-card card fade-in"><div class="review-header"><div class="review-avatar">吴</div><div class="review-info"><span class="review-name">吴开发者</span><span class="review-role">独立开发者</span></div></div><div class="review-stars">★★★★★</div><p class="review-text">一直在用他家的 API 做产品，没出过问题！</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="partner" id="partner">
+    <div class="container">
+      <h2 class="section-title">合作伙伴计划</h2>
+      <div class="gradient-line"></div>
+      <p class="section-subtitle">与我们携手共建 AI 生态</p>
+      <div class="partner-advantages">
+        <div class="partner-card card fade-in">
+          <div class="partner-icon">💵</div>
+          <h3>高额折扣</h3>
+          <p>充值享受专属折扣，直接打到最低价，具体折扣联系客服</p>
+        </div>
+        <div class="partner-card card fade-in">
+          <div class="partner-icon">📈</div>
+          <h3>专属后台</h3>
+          <p>独立管理后台，自主定价系统，实时查看销量收益</p>
+        </div>
+        <div class="partner-card card fade-in">
+          <div class="partner-icon">🎯</div>
+          <h3>适合人群</h3>
+          <p>大学生、宝妈、兼职/全职、自由创业者等有想法和梦想的人</p>
+        </div>
+        <div class="partner-card card fade-in">
+          <div class="partner-icon">🛠️</div>
+          <h3>技术支持</h3>
+          <p>专属客服对接，问题实时响应</p>
+        </div>
+      </div>
+      <div class="partner-requirements">
+        <h3>代理商要求</h3>
+        <ol>
+          <li>具备一定的客户资源和销售能力</li>
+          <li>认同产品理念，愿意长期合作</li>
+          <li>遵守代理商要求，维护客户权益</li>
+          <li>能够提供优质的客户服务</li>
+          <li>有一定的技术背景优先，小白也可以加入</li>
+          <li>认同 AI 行业发展前景，共创未来</li>
+        </ol>
+      </div>
+      <div class="partner-flow">
+        <h3>入驻流程</h3>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-num">1</div><div class="flow-label">提交申请</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-num">2</div><div class="flow-label">资质审核</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-num">3</div><div class="flow-label">搭建网站</div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-num">4</div><div class="flow-label">正式入驻</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <button class="btn-primary">申请成为合作伙伴</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span>AI API Hub</span>
+        <p>一站式 AI 模型接入平台</p>
+      </div>
+      <div class="footer-links">
+        <a href="#hero">首页</a>
+        <a href="#features">控制台</a>
+        <a href="#models">模型广场</a>
+        <a href="#reviews">文档</a>
+      </div>
+      <div class="footer-contact">
+        <p>🐧 QQ：待填写</p>
+        <p>💬 微信：待填写</p>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 AI API Hub. 版权所有</p>
+        <p>设计与开发基于 New API 系统</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width, height, particles;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      class Particle {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.5;
+          this.speedY = (Math.random() - 0.5) * 0.5;
+          this.opacity = Math.random() * 0.5 + 0.1;
+          this.hue = Math.random() * 60 + 220;
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.opacity})`;
+          ctx.fill();
+        }
+      }
+
+      function drawLines() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 * (1 - dist / 120)})`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function init() {
+        resize();
+        const count = Math.min(Math.floor((width * height) / 8000), 150);
+        particles = Array.from({ length: count }, () => new Particle());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        drawLines();
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', () => { resize(); particles.forEach(p => p.reset()); });
+      init();
+      animate();
+    })();
+
+    // 导航栏滚动效果
+    (function() {
+      const navbar = document.getElementById('navbar');
+      if (!navbar) return;
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+
+      // 移动端菜单
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const navLinks = document.querySelector('.navbar-links');
+      if (mobileBtn && navLinks) {
+        mobileBtn.addEventListener('click', () => {
+          navLinks.classList.toggle('mobile-open');
+        });
+      }
+    })();
+
+    // API 地址复制功能
+    function copyApiUrl(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        const btn = el.parentElement.querySelector('.copy-btn');
+        btn.textContent = '已复制!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '复制';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // 数据统计动画
+    (function() {
+      function animateNumber(el, target, prefix, suffix) {
+        const isFloat = String(target).includes('.');
+        const duration = 2000;
+        const start = performance.now();
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          const current = ease * target;
+          el.textContent = (prefix || '') + (isFloat ? current.toFixed(1) : Math.floor(current)) + (suffix || '');
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const target = parseFloat(el.dataset.target);
+            const prefix = el.dataset.prefix || '';
+            const suffix = el.dataset.suffix || '';
+            animateNumber(el, target, prefix, suffix);
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('.stat-number[data-target]').forEach(el => observer.observe(el));
+    })();
+
+    // 滚动动画
+    (function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, index * 80);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    })();
+
+    // ===== API复制 =====
+
+  </script>
+</body>
+</html>
