@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>控制台 - AI API Hub</title>
+  <link rel="stylesheet" href="./assets/console.css" />
+</head>
+<body>
+  <div class="console-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-badge">AI</span>
+        <span>AI API Hub</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="./dashboard.html">概览</a>
+        <a class="sidebar-link" href="./api-keys.html">API Keys</a>
+        <a class="sidebar-link" href="./index.html">返回官网</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>控制台概览</h1>
+          <p>查看账户余额、请求量和近期使用情况。</p>
+        </div>
+        <div class="actions">
+          <div class="user-chip" id="userChip"></div>
+          <button class="btn-secondary" onclick="logout()">退出登录</button>
+        </div>
+      </header>
+
+      <section class="grid-4">
+        <article class="card metric-card">
+          <div class="metric-label">账户余额</div>
+          <div class="metric-value">$128.50</div>
+        </article>
+        <article class="card metric-card">
+          <div class="metric-label">今日请求</div>
+          <div class="metric-value">18,420</div>
+        </article>
+        <article class="card metric-card">
+          <div class="metric-label">活跃 Key</div>
+          <div class="metric-value" id="activeKeyCount">0</div>
+        </article>
+        <article class="card metric-card">
+          <div class="metric-label">错误率</div>
+          <div class="metric-value">0.18%</div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="card panel">
+          <h2>最近请求概览</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>模型</th>
+                <th>分组</th>
+                <th>状态</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>claude-sonnet-4-6</td>
+                <td><span class="tag">default</span></td>
+                <td class="status-ok">成功</td>
+                <td>1 分钟前</td>
+              </tr>
+              <tr>
+                <td>gpt-4o-mini</td>
+                <td><span class="tag">default</span></td>
+                <td class="status-ok">成功</td>
+                <td>4 分钟前</td>
+              </tr>
+              <tr>
+                <td>deepseek-chat</td>
+                <td><span class="tag">dev</span></td>
+                <td class="status-ok">成功</td>
+                <td>8 分钟前</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card panel">
+          <h2>快捷操作</h2>
+          <div class="actions">
+            <a class="btn-primary" href="./api-keys.html">管理 API Key</a>
+            <a class="btn-secondary" href="./index.html">查看官网</a>
+          </div>
+          <p class="inline-note">当前为演示控制台，后续可接入真实余额、统计与日志接口。</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/console.js"></script>
+  <script>
+    const user = requireAuth();
+    if (user) {
+      document.getElementById('userChip').textContent = `${user.name} · ${user.email}`;
+      const activeCount = getKeys().filter(item => item.status === 'active').length;
+      document.getElementById('activeKeyCount').textContent = String(activeCount);
+    }
+  </script>
+</body>
+</html>
