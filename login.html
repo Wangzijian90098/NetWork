@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - AI API Hub</title>
+  <link rel="stylesheet" href="./assets/console.css" />
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="brand" style="margin-bottom:20px;">
+        <span class="brand-badge">AI</span>
+        <span>AI API Hub</span>
+      </div>
+      <h1>欢迎回来</h1>
+      <p>登录后进入控制台，查看余额、用量与 API Key。</p>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="email">邮箱</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" value="demo@aihub.com" required />
+        </div>
+        <div class="field">
+          <label for="password">密码</label>
+          <input id="password" name="password" type="password" placeholder="请输入密码" value="12345678" required />
+        </div>
+        <button class="btn-primary" type="submit" style="width:100%; justify-content:center;">登录并进入控制台</button>
+      </form>
+
+      <p class="inline-note">演示版：提交表单后写入本地登录态，不请求真实后端。</p>
+      <div class="actions" style="margin-top:18px;">
+        <a class="btn-secondary" href="./index.html">返回官网</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./assets/console.js"></script>
+  <script>
+    const existing = getDemoUser();
+    if (existing) {
+      window.location.href = './dashboard.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      setDemoUser({
+        email,
+        name: '演示用户',
+        role: 'owner'
+      });
+      ensureDemoKeys();
+      window.location.href = './dashboard.html';
+    });
+  </script>
+</body>
+</html>
