@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Keys - AI API Hub</title>
+  <link rel="stylesheet" href="./assets/console.css" />
+</head>
+<body>
+  <div class="console-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-badge">AI</span>
+        <span>AI API Hub</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link" href="./dashboard.html">概览</a>
+        <a class="sidebar-link active" href="./api-keys.html">API Keys</a>
+        <a class="sidebar-link" href="./index.html">返回官网</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="page-title">
+          <h1>API Key 管理</h1>
+          <p>创建、查看和撤销访问密钥。</p>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" id="createKeyBtn">创建新 Key</button>
+          <button class="btn-secondary" onclick="logout()">退出登录</button>
+        </div>
+      </header>
+
+      <section class="card panel">
+        <h2>当前密钥</h2>
+        <div class="key-list" id="keyList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/console.js"></script>
+  <script>
+    requireAuth();
+
+    function renderKeys() {
+      const root = document.getElementById('keyList');
+      const keys = getKeys();
+      root.innerHTML = keys.map(item => `
+        <div class="key-row">
+          <div class="key-meta">
+            <h3>${item.name}</h3>
+            <p>${maskToken(item.token)} · ${item.group} · ${item.createdAt}</p>
+            <p>用量：${item.usage}</p>
+          </div>
+          <div class="key-actions">
+            <span class="tag">${item.status}</span>
+            <button class="btn-secondary" data-copy="${item.token}">复制</button>
+            <button class="btn-danger" data-revoke="${item.id}">撤销</button>
+          </div>
+        </div>
+      `).join('');
+
+      root.querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.copy);
+          btn.textContent = '已复制';
+          setTimeout(() => { btn.textContent = '复制'; }, 1200);
+        });
+      });
+
+      root.querySelectorAll('[data-revoke]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          revokeKey(btn.dataset.revoke);
+          renderKeys();
+        });
+      });
+    }
+
+    document.getElementById('createKeyBtn').addEventListener('click', () => {
+      createKey();
+      renderKeys();
+    });
+
+    renderKeys();
+  </script>
+</body>
+</html>
