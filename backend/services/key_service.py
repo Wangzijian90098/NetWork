@@ -60,4 +60,11 @@ def validate_key(token: str) -> dict | None:
         row = cursor.fetchone()
         if not row:
             return None
-        return dict(row)
+        return {
+            "id": row["id"],
+            "user_id": row["user_id"],
+            "status": row["status"],
+            "balance": row["balance"],
+            "role": row["role"],
+            "region": row.get("region"),
+        }

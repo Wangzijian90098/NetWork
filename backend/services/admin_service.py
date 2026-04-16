@@ -55,11 +55,23 @@ def delete_platform_key(key_id: int) -> bool:
         return cursor.rowcount > 0
 
 
-def get_platform_keys_by_provider(provider: str) -> list[dict]:
-    """获取指定 provider 的可用 Key"""
+def get_platform_keys_by_provider(provider: str, region: str = "GLOBAL") -> list[dict]:
+    """
+    获取指定 provider 和地区的可用 Key。
+    优先级：region 完全匹配 > GLOBAL 降级兜底。
+    """
     with get_cursor() as cursor:
+        # 1. 优先匹配指定地区
         cursor.execute(
-            "SELECT * FROM platform_key WHERE provider = ? AND status = 'active'",
+            "SELECT * FROM platform_key WHERE provider = ? AND region = ? AND status = 'active'",
+            (provider, region)
+        )
+        rows = cursor.fetchall()
+        if rows:
+            return [dict(row) for row in rows]
+        # 2. 降级：GLOBAL Key
+        cursor.execute(
+            "SELECT * FROM platform_key WHERE provider = ? AND region = 'GLOBAL' AND status = 'active'",
             (provider,)
         )
         return [dict(row) for row in cursor.fetchall()]
