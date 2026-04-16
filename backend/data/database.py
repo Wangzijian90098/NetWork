@@ -108,6 +108,20 @@ def init_db():
                 (model, provider, inp, outp)
             )
         conn.commit()
+        # Migration: add region columns if not exist
+        cursor.execute("PRAGMA table_info(user)")
+        user_columns = [col[1] for col in cursor.fetchall()]
+        if "region" not in user_columns:
+            cursor.execute("ALTER TABLE user ADD COLUMN region VARCHAR(10) DEFAULT NULL")
+            print("[DB] Added 'region' column to user table")
+
+        cursor.execute("PRAGMA table_info(platform_key)")
+        pk_columns = [col[1] for col in cursor.fetchall()]
+        if "region" not in pk_columns:
+            cursor.execute("ALTER TABLE platform_key ADD COLUMN region VARCHAR(10) DEFAULT 'GLOBAL'")
+            print("[DB] Added 'region' column to platform_key table")
+
+        conn.commit()
         print("[DB] Initialized successfully")
     finally:
         conn.close()
