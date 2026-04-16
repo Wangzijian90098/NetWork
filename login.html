@@ -35,23 +35,18 @@
     </section>
   </main>
 
-  <script src="./assets/console.js"></script>
+  <script src="./assets/api.js"></script>
   <script>
-    const existing = getDemoUser();
-    if (existing) {
-      window.location.href = './dashboard.html';
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', (event) => {
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = document.getElementById('email').value.trim();
-      setDemoUser({
-        email,
-        name: '演示用户',
-        role: 'owner'
-      });
-      ensureDemoKeys();
-      window.location.href = './dashboard.html';
+      const password = document.getElementById('password').value;
+      try {
+        await authLogin(email, password);
+        window.location.href = './dashboard.html';
+      } catch (err) {
+        alert('登录失败：' + err.message);
+      }
     });
   </script>
 </body>
