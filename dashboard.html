@@ -98,14 +98,25 @@
     </main>
   </div>
 
-  <script src="./assets/console.js"></script>
+  <script src="./assets/api.js"></script>
   <script>
-    const user = requireAuth();
-    if (user) {
-      document.getElementById('userChip').textContent = `${user.name} · ${user.email}`;
-      const activeCount = getKeys().filter(item => item.status === 'active').length;
-      document.getElementById('activeKeyCount').textContent = String(activeCount);
-    }
+    (async function() {
+      try {
+        // 获取用量统计
+        const usage = await getUsage(30);
+        const summary = usage.summary || {};
+
+        // 填充活跃 Key 数量
+        const keys = await getKeys();
+        const activeCount = keys.filter(k => k.status === 'active').length;
+        const activeEl = document.getElementById('activeKeyCount');
+        if (activeEl) activeEl.textContent = String(activeCount);
+
+      } catch (err) {
+        // 401 会自动跳转 login.html，其他错误静默降级为静态展示
+        console.warn('获取数据失败:', err.message);
+      }
+    })();
   </script>
 </body>
 </html>
