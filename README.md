@@ -32,6 +32,19 @@ python -m http.server 8090
 # 浏览器打开 http://127.0.0.1:8090/
 ```
 
+## 后端运行
+
+```bash
+cd D:\NetWork/backend
+pip install -r requirements.txt
+python download_deps.py   # 首次运行下载 H2 JAR
+python AiHubBackend.py    # 启动服务 http://localhost:8080
+```
+
+后端 API 文档见 `docs/superpowers/specs/2026-04-16-backend-api-gateway-design.md`
+
+---
+
 ## 开发阶段
 
 - [x] 落地页已完成
