@@ -29,11 +29,13 @@ def register_blueprints():
     from routes.chat_routes import chat_bp
     from routes.admin_routes import admin_bp
     from routes.usage_routes import usage_bp
+    from routes.user_routes import user_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(key_bp)
     app.register_blueprint(chat_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(user_bp)
     app.register_blueprint(usage_bp)
 
 

@@ -82,3 +82,16 @@ async function getModels() {
   const data = await request('/v1/models');
   return data.data || [];
 }
+
+// ---- 用户设置 ----
+
+async function getProfile() {
+  return request('/api/user/me');
+}
+
+async function updateRegion(region) {
+  return request('/api/user/region', {
+    method: 'PUT',
+    body: JSON.stringify({ region }),
+  });
+}
