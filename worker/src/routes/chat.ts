@@ -108,7 +108,8 @@ chat.post('/v1/chat/completions', async (c) => {
       method: 'POST',
       headers: upstreamHeaders,
       body: JSON.stringify(upstreamBody),
-      cf: { timeout: 60 } as RequestInitCfProperties,
+      // @ts-ignore Cloudflare Workers 支持 cf.timeout
+      cf: { timeout: 60 },
     } as RequestInit);
   } catch {
     return c.json({ error: { message: 'Upstream request timeout', type: 'invalid_request_error' } }, 504);
@@ -162,10 +163,5 @@ chat.get('/v1/models', async (c) => {
 
   return c.json({ object: 'list', data }, 200);
 });
-
-// Type helper
-interface RequestInitCfProperties {
-  cf?: { timeout?: number };
-}
 
 export { chat };

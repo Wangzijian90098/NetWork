@@ -1,7 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 const SECRET = new TextEncoder().encode(
-  // 生产环境建议通过环境变量注入，此处用固定密钥
   'aihubs-super-secret-key-change-in-production'
 );
 const COOKIE_NAME = 'token';
@@ -11,12 +10,14 @@ export interface JWTPayload {
   sub: number;
   email: string;
   role: string;
-  iat?: number;
-  exp?: number;
 }
 
-export async function signToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): Promise<string> {
-  return new SignJWT(payload)
+export async function signToken(payload: JWTPayload): Promise<string> {
+  return new SignJWT({
+    sub: String(payload.sub),
+    email: payload.email,
+    role: payload.role,
+  } as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(EXPIRY)
@@ -26,7 +27,12 @@ export async function signToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): Promi
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload as JWTPayload;
+    const p = payload as unknown as { sub: string; email: string; role: string };
+    return {
+      sub: Number(p.sub),
+      email: p.email,
+      role: p.role,
+    };
   } catch {
     return null;
   }

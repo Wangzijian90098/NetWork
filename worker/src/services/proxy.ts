@@ -64,7 +64,7 @@ export async function deductBalance(db: D1Database, userId: number, cost: number
     .prepare('UPDATE user SET balance = balance - ? WHERE id = ? AND balance >= ?')
     .bind(cost, userId, cost)
     .run();
-  return (result.meta as { changes?: number }).changes > 0;
+  return ((result.meta as { changes?: number }).changes ?? 0) > 0;
 }
 
 export async function refundBalance(db: D1Database, userId: number, cost: number): Promise<void> {
