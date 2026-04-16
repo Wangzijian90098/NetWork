@@ -9,7 +9,8 @@ def register():
     data = request.get_json() or {}
     email = data.get("email", "").strip()
     password = data.get("password", "")
-    success, message = __import__("services.auth_service", fromlist=["register"]).register(email, password)
+    region = data.get("region")
+    success, message = __import__("services.auth_service", fromlist=["register"]).register(email, password, region)
     return jsonify({"success": success, "message": message}), 200 if success else 400
 
 

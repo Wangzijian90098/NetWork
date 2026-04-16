@@ -5,7 +5,7 @@ from utils.jwt_util import generate_token
 from models.models import User
 
 
-def register(email: str, password: str) -> tuple[bool, str]:
+def register(email: str, password: str, region: str = None) -> tuple[bool, str]:
     """注册用户。返回 (成功, 消息)"""
     if not email or not password:
         return False, "邮箱和密码不能为空"
@@ -16,9 +16,10 @@ def register(email: str, password: str) -> tuple[bool, str]:
         if cursor.fetchone():
             return False, "该邮箱已注册"
         hashed = hash_password(password)
+        region_value = region if region in ("CN", "OVERSEAS") else None
         cursor.execute(
-            "INSERT INTO user (email, password, balance) VALUES (?, ?, ?)",
-            (email, hashed, 10.0)  # 新用户送 $10 体验金
+            "INSERT INTO user (email, password, balance, region) VALUES (?, ?, ?, ?)",
+            (email, hashed, 10.0, region_value)
         )
     return True, "注册成功"
 

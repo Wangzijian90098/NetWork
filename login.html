@@ -16,19 +16,42 @@
       <h1>欢迎回来</h1>
       <p>登录后进入控制台，查看余额、用量与 API Key。</p>
 
-      <form id="loginForm">
+      <div class="auth-tabs" style="display:flex; gap:8px; margin-bottom:20px;">
+        <button class="tab-btn active" type="button" onclick="switchTab('login')">登录</button>
+        <button class="tab-btn" type="button" onclick="switchTab('register')">注册</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
         <div class="field">
-          <label for="email">邮箱</label>
-          <input id="email" name="email" type="email" placeholder="you@example.com" value="demo@aihub.com" required />
+          <label for="login-email">邮箱</label>
+          <input id="login-email" name="email" type="email" placeholder="you@example.com" value="demo@aihub.com" required />
         </div>
         <div class="field">
-          <label for="password">密码</label>
-          <input id="password" name="password" type="password" placeholder="请输入密码" value="12345678" required />
+          <label for="login-password">密码</label>
+          <input id="login-password" name="password" type="password" placeholder="请输入密码" value="12345678" required />
         </div>
         <button class="btn-primary" type="submit" style="width:100%; justify-content:center;">登录并进入控制台</button>
       </form>
 
-      <p class="inline-note">演示版：提交表单后写入本地登录态，不请求真实后端。</p>
+      <form id="registerForm" class="auth-form" style="display:none;">
+        <div class="field">
+          <label for="reg-email">邮箱</label>
+          <input id="reg-email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="field">
+          <label for="reg-password">密码</label>
+          <input id="reg-password" name="password" type="password" placeholder="不少于6位" required minlength="6" />
+        </div>
+        <div class="field">
+          <label for="reg-region">主要使用地区</label>
+          <select id="reg-region" name="region">
+            <option value="CN">🇨🇳 国内（推荐）</option>
+            <option value="OVERSEAS">🌐 海外</option>
+          </select>
+        </div>
+        <button class="btn-primary" type="submit" style="width:100%; justify-content:center;">注册并登录</button>
+      </form>
+
       <div class="actions" style="margin-top:18px;">
         <a class="btn-secondary" href="./landing.html">返回官网</a>
       </div>
@@ -37,15 +60,41 @@
 
   <script src="./assets/api.js"></script>
   <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+      if (tab === 'login') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('loginForm').style.display = '';
+      } else {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('registerForm').style.display = '';
+      }
+    }
+
     document.getElementById('loginForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
       try {
         await authLogin(email, password);
         window.location.href = './dashboard.html';
       } catch (err) {
         alert('登录失败：' + err.message);
+      }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const region = document.getElementById('reg-region').value;
+      try {
+        await authRegister(email, password, region);
+        await authLogin(email, password);
+        window.location.href = './dashboard.html';
+      } catch (err) {
+        alert('注册失败：' + err.message);
       }
     });
   </script>

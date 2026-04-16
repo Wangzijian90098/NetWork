@@ -39,10 +39,12 @@ async function authLogin(email, password) {
   });
 }
 
-async function authRegister(email, password) {
+async function authRegister(email, password, region = null) {
+  const body = { email, password };
+  if (region) body.region = region;
   return request('/api/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(body),
   });
 }
 
