@@ -10,9 +10,9 @@ import { user } from './routes/user';
 import { usage } from './routes/usage';
 import { admin } from './routes/admin';
 import type { Env } from './db/index';
-import type { SafeUser } from './types';
+import type { SafeUser, AuthVariables } from './types';
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: { user?: SafeUser } }>();
 
 // CORS — 允许所有来源（Workers 通过 Cloudflare Pages 代理时同域）
 app.use('/*', cors({
