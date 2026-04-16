@@ -1,0 +1,4 @@
+# Cloudflare Pages：将 /api/* 请求代理到 Worker
+# 部署后替换 aihubs-worker 为实际 Worker 子域名
+/api/*  https://aihubs-worker.workers.dev/api/*  200
+/health https://aihubs-worker.workers.dev/health 200
