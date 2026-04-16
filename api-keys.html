@@ -39,24 +39,35 @@
     </main>
   </div>
 
-  <script src="./assets/console.js"></script>
+  <script src="./assets/api.js"></script>
   <script>
-    requireAuth();
+    async function loadKeys() {
+      try {
+        const keys = await getKeys();
+        renderKeys(keys);
+      } catch (err) {
+        if (err.message.includes('Unauthorized')) return;  // 已跳转
+        document.getElementById('keyList').innerHTML =
+          '<p style="color:red;">加载失败：' + err.message + '</p>';
+      }
+    }
 
-    function renderKeys() {
+    function renderKeys(keys) {
       const root = document.getElementById('keyList');
-      const keys = getKeys();
+      if (!keys || keys.length === 0) {
+        root.innerHTML = '<p class="inline-note">暂无 API Key，点击上方按钮创建。</p>';
+        return;
+      }
       root.innerHTML = keys.map(item => `
         <div class="key-row">
           <div class="key-meta">
-            <h3>${item.name}</h3>
-            <p>${maskToken(item.token)} · ${item.group} · ${item.createdAt}</p>
-            <p>用量：${item.usage}</p>
+            <h3>${item.key_name || item.name || 'Unnamed Key'}</h3>
+            <p>${maskToken(item.token)} · ${item.status} · ${item.created_at || item.createdAt || ''}</p>
           </div>
           <div class="key-actions">
             <span class="tag">${item.status}</span>
             <button class="btn-secondary" data-copy="${item.token}">复制</button>
-            <button class="btn-danger" data-revoke="${item.id}">撤销</button>
+            ${item.status === 'active' ? `<button class="btn-danger" data-revoke="${item.id}">撤销</button>` : ''}
           </div>
         </div>
       `).join('');
@@ -70,19 +81,27 @@
       });
 
       root.querySelectorAll('[data-revoke]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          revokeKey(btn.dataset.revoke);
-          renderKeys();
+        btn.addEventListener('click', async () => {
+          try {
+            await revokeKey(btn.dataset.revoke);
+            loadKeys();
+          } catch (err) {
+            alert('撤销失败：' + err.message);
+          }
         });
       });
     }
 
-    document.getElementById('createKeyBtn').addEventListener('click', () => {
-      createKey();
-      renderKeys();
+    document.getElementById('createKeyBtn').addEventListener('click', async () => {
+      try {
+        await createKey('New Key');
+        loadKeys();
+      } catch (err) {
+        alert('创建失败：' + err.message);
+      }
     });
 
-    renderKeys();
+    loadKeys();
   </script>
 </body>
 </html>
