@@ -1,7 +1,6 @@
 """用户账户设置路由"""
 from flask import Blueprint, request, jsonify
-from utils.jwt_util import extract_token_from_header, verify_token
-from services import auth_service
+from utils.jwt_util import verify_token
 
 user_bp = Blueprint("user", __name__, url_prefix="/api/user")
 
