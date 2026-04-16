@@ -138,8 +138,10 @@ def get_client_ip(request) -> str:
     """
     从 Flask 请求中获取真实客户端 IP。
     优先取 X-Forwarded-For / X-Real-IP（反向代理场景），
-    否则取 remote_addr。
+    否则取 remote_addr。request 为 None 时返回 "127.0.0.1"。
     """
+    if request is None:
+        return "127.0.0.1"
     forwarded = request.headers.get("X-Forwarded-For", "").split(",")
     if forwarded and forwarded[0].strip():
         return forwarded[0].strip()

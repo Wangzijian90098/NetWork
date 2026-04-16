@@ -66,5 +66,5 @@ def validate_key(token: str) -> dict | None:
             "status": row["status"],
             "balance": row["balance"],
             "role": row["role"],
-            "region": row.get("region"),
+            "region": row["region"] if "region" in row else None,
         }

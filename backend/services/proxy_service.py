@@ -121,7 +121,7 @@ def proxy_chat_request(bearer_token: str, request_data: dict, flask_request=None
         from data.database import get_cursor
         with get_cursor() as cursor:
             cursor.execute(
-                "UPDATE user SET region = ? WHERE id = ?",
+                "UPDATE user SET region = ? WHERE id = ? AND region IS NULL",
                 (user_region, user_id)
             )
 
