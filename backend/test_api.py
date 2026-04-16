@@ -25,7 +25,7 @@ def client():
 
 @pytest.fixture
 def jwt_token(client):
-    """注册并获取 JWT Token"""
+    """注册并获取 JWT Token（从 HttpOnly Cookie 中提取）"""
     email = "jwt_user@example.com"
     rv = client.post("/api/auth/register", json={
         "email": email,
@@ -41,8 +41,10 @@ def jwt_token(client):
         "password": "test123456"
     })
     assert rv.status_code == 200
-    data = rv.get_json()
-    return data["data"]["token"]
+    # 从 Set-Cookie 中提取 token 值
+    cookies = rv.headers.getlist("Set-Cookie")
+    cookie_hdr = next((c for c in cookies if "token=" in c), "")
+    return cookie_hdr.split(";")[0].split("=")[1]
 
 
 @pytest.fixture
@@ -86,7 +88,10 @@ def test_login(client):
     rv = client.post("/api/auth/login", json={"email": "login@example.com", "password": "password1"})
     assert rv.status_code == 200
     data = rv.get_json()
-    assert "token" in data["data"]
+    assert "user" in data["data"]
+    # 验证设置了 HttpOnly Cookie
+    cookies = rv.headers.getlist("Set-Cookie")
+    assert any("token=" in c for c in cookies), "Should set token cookie"
 
 
 def test_create_and_list_keys(client, jwt_token):
@@ -128,3 +133,60 @@ def test_proxy_insufficient_balance(client, api_key_token):
                      headers=headers,
                      json={"model": "gpt-4o", "messages": [{"role": "user", "content": "hi"}]})
     assert rv.status_code in [402, 503]
+
+
+def test_login_sets_cookie(client):
+    """登录后应设置 HttpOnly Cookie"""
+    rv = client.post("/api/auth/register", json={
+        "email": "cookie_test@example.com",
+        "password": "test123456"
+    })
+    rv = client.post("/api/auth/login", json={
+        "email": "cookie_test@example.com",
+        "password": "test123456"
+    })
+    assert rv.status_code == 200
+    cookies = rv.headers.getlist("Set-Cookie")
+    assert any("token=" in c and "HttpOnly" in c for c in cookies), \
+        "Response should set HttpOnly Cookie"
+
+
+def test_logout_clears_cookie(client):
+    """登出后应清除 Cookie"""
+    # 先注册并登录
+    client.post("/api/auth/register", json={
+        "email": "logout_test@example.com", "password": "test123456"
+    })
+    login_rv = client.post("/api/auth/login", json={
+        "email": "logout_test@example.com", "password": "test123456"
+    })
+    # 提取 Cookie 值
+    cookies = login_rv.headers.getlist("Set-Cookie")
+    cookie_hdr = next((c for c in cookies if "token=" in c), "")
+    token_val = cookie_hdr.split(";")[0].split("=")[1]
+
+    # 调用登出
+    rv = client.post("/api/auth/logout", headers={"Cookie": f"token={token_val}"})
+    assert rv.status_code == 200
+    logout_cookies = rv.headers.getlist("Set-Cookie")
+    assert any("token=" in c and ("Max-Age=0" in c or "expires=" in c.lower()) for c in logout_cookies), \
+        "Logout should clear token cookie"
+
+
+def test_cookie_auth_for_keys(client):
+    """使用 Cookie（而非 Authorization Header）访问 Key 接口"""
+    # 注册并登录获取 Cookie
+    client.post("/api/auth/register", json={
+        "email": "cookie_auth@example.com", "password": "test123456"
+    })
+    login_rv = client.post("/api/auth/login", json={
+        "email": "cookie_auth@example.com", "password": "test123456"
+    })
+    cookie_hdr = login_rv.headers.getlist("Set-Cookie")[0]
+    token_val = cookie_hdr.split(";")[0].replace("token=", "")
+
+    # 用 Cookie 创建 Key
+    rv = client.post("/api/keys",
+                     json={"name": "Cookie Test Key"},
+                     headers={"Cookie": f"token={token_val}"})
+    assert rv.status_code == 201, rv.get_json()
