@@ -18,7 +18,7 @@ def chat_completions():
         return jsonify({"error": {"message": "Request body must be JSON", "type": "invalid_request_error"}}), 400
 
     request_data = request.get_json()
-    result, status_code, error = proxy_service.proxy_chat_request(bearer_token, request_data)
+    result, status_code, error = proxy_service.proxy_chat_request(bearer_token, request_data, request)
 
     if error:
         return jsonify({"error": {"message": error, "type": "invalid_request_error"}}), status_code

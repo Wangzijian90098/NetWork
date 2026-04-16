@@ -3,6 +3,7 @@ import uuid
 import requests
 from datetime import datetime
 from services import admin_service, key_service
+from utils.ip_region import get_client_ip, ip_to_region
 
 # 模型 → provider 映射
 MODEL_PROVIDER_MAP = {
@@ -50,9 +51,9 @@ def get_provider(model: str) -> str | None:
     return None
 
 
-def select_platform_key(provider: str) -> dict | None:
-    """从平台 Key 池中选择一个可用的 Key"""
-    keys = admin_service.get_platform_keys_by_provider(provider)
+def select_platform_key(provider: str, region: str) -> dict | None:
+    """从平台 Key 池中选择一个可用的 Key（按地区筛选）"""
+    keys = admin_service.get_platform_keys_by_provider(provider, region)
     if not keys:
         return None
     return keys[0]
@@ -94,7 +95,7 @@ def record_usage(user_id: int, api_key_id: int, model: str,
         """, (user_id, api_key_id, model, input_tokens, output_tokens, cost, request_id))
 
 
-def proxy_chat_request(bearer_token: str, request_data: dict) -> tuple[dict | None, int, str]:
+def proxy_chat_request(bearer_token: str, request_data: dict, flask_request=None) -> tuple[dict | None, int, str]:
     """
     核心代理方法。
     返回 (上游响应json, HTTP状态码, 错误消息)
@@ -112,29 +113,41 @@ def proxy_chat_request(bearer_token: str, request_data: dict) -> tuple[dict | No
     api_key_id = key_info["id"]
     user_balance = key_info["balance"]
 
-    # 2. 获取模型价格
+    # 2. 获取用户地区（未配置则自动探测并写入DB）
+    user_region = key_info.get("region")
+    if not user_region:
+        client_ip = get_client_ip(flask_request) if flask_request else "127.0.0.1"
+        user_region = ip_to_region(client_ip)
+        from data.database import get_cursor
+        with get_cursor() as cursor:
+            cursor.execute(
+                "UPDATE user SET region = ? WHERE id = ?",
+                (user_region, user_id)
+            )
+
+    # 3. 获取模型价格
     price = admin_service.get_model_price(model)
     if not price:
         return None, 422, f"Model '{model}' not found or disabled"
 
-    # 3. 估算费用并检查余额
+    # 4. 估算费用并检查余额
     estimated_cost = estimate_cost(model, messages)
     if user_balance < estimated_cost:
         return None, 402, "Insufficient balance"
 
-    # 4. 路由到 provider
+    # 5. 路由到 provider
     provider = get_provider(model)
     if not provider:
         return None, 422, f"Provider for model '{model}' not configured"
 
-    platform_key = select_platform_key(provider)
+    platform_key = select_platform_key(provider, user_region)
     if not platform_key:
         return None, 503, "No available platform key for this provider"
 
     base_url = platform_key["base_url"] or PROVIDER_BASE_URL.get(provider, "")
     upstream_url = f"{base_url}/chat/completions"
 
-    # 5. 构建上游请求头
+    # 6. 构建上游请求头
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {platform_key['key_token']}"}
     if provider == "anthropic":
         headers["x-api-key"] = headers.pop("Authorization", "").replace("Bearer ", "")
@@ -150,7 +163,7 @@ def proxy_chat_request(bearer_token: str, request_data: dict) -> tuple[dict | No
     else:
         upstream_data = request_data
 
-    # 6. 转发请求
+    # 7. 转发请求
     request_id = f"chatcmpl-{uuid.uuid4().hex[:8]}"
     try:
         resp = requests.post(upstream_url, json=upstream_data, headers=headers, timeout=60)
@@ -159,14 +172,14 @@ def proxy_chat_request(bearer_token: str, request_data: dict) -> tuple[dict | No
     except requests.exceptions.RequestException as e:
         return None, 502, f"Upstream request failed: {str(e)}"
 
-    # 7. 解析上游响应
+    # 8. 解析上游响应
     if resp.status_code != 200:
         refund_balance(user_id, estimated_cost)
         return None, 502, f"Upstream error: {resp.text[:200]}"
 
     upstream_json = resp.json()
 
-    # 8. 提取 usage 并计算实际费用
+    # 9. 提取 usage 并计算实际费用
     usage = upstream_json.get("usage", {})
     input_tokens = usage.get("prompt_tokens", 0)
     output_tokens = usage.get("completion_tokens", 0)
@@ -174,14 +187,14 @@ def proxy_chat_request(bearer_token: str, request_data: dict) -> tuple[dict | No
     output_cost = output_tokens / 1000 * price["price_per_1k_output"]
     actual_cost = round(input_cost + output_cost, 6)
 
-    # 9. 实际扣费
+    # 10. 实际扣费
     if not deduct_balance(user_id, actual_cost):
         refund_balance(user_id, estimated_cost)
         return None, 402, "Balance deduction failed"
 
-    # 10. 记录用量
+    # 11. 记录用量
     record_usage(user_id, api_key_id, model, input_tokens, output_tokens, actual_cost, request_id)
 
-    # 11. 附加 request_id 并返回
+    # 12. 附加 request_id 并返回
     upstream_json["id"] = request_id
     return upstream_json, 200, ""
