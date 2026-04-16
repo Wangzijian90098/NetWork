@@ -18,3 +18,8 @@ backend/data/*.db
 # OS
 .DS_Store
 Thumbs.db
+
+# Downloaded binary dependencies (managed by download_deps.py)
+backend/data/*.xdb
+backend/h2.jar
+backend/*.jar
