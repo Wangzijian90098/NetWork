@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
 """AI API 中转平台 — 后端网关主入口"""
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
+import os
 from data.database import init_db
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
+
+
+@app.route("/")
+def serve_root():
+    """开发环境：Flask 直接托管前端入口"""
+    return send_from_directory(os.path.dirname(__file__), "landing.html")
+
+
+@app.route("/<path:filename>")
+def serve_static(filename):
+    """开发环境：Flask 托管前端静态资源（HTML/CSS/JS）"""
+    # 防止目录遍历
+    filename = os.path.basename(filename)
+    return send_from_directory(os.path.dirname(__file__), filename)
 
 
 def register_blueprints():
