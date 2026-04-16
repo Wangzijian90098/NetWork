@@ -14,7 +14,7 @@
 - 语言：Kotlin
 - HTTP 服务：`com.sun.net.httpserver`（JDK 内置，零依赖）
 - 数据库：H2（文件模式，零配置）
-- 构建：Kotlin 脚本直接运行（无需 Gradle/Maven）
+- 构建：Python
 - 后期可平滑迁移至 MySQL（仅需更换驱动和连接字符串）
 
 ---
