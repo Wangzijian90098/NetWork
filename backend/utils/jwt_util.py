@@ -1,6 +1,6 @@
 """JWT Token 签发与验证"""
 import jwt
-import datetime
+from datetime import datetime, timedelta, timezone
 
 SECRET_KEY = "aihubs-secret-key-change-in-production"
 ALGORITHM = "HS256"
@@ -13,8 +13,8 @@ def generate_token(user_id: int, email: str, role: str) -> str:
         "user_id": user_id,
         "email": email,
         "role": role,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=TOKEN_EXPIRE_DAYS),
-        "iat": datetime.datetime.utcnow(),
+        "exp": datetime.now(timezone.utc) + timedelta(days=TOKEN_EXPIRE_DAYS),
+        "iat": datetime.now(timezone.utc),
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
