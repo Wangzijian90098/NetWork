@@ -378,7 +378,7 @@ Content-Type: application/json
 
 ```
 backend/
-├── AiHubBackend.kt          # 主入口，启动 HTTP 服务
+├── ai_hub_backend.py          # 主入口，启动 HTTP 服务
 ├── data/
 │   ├── Database.kt          # H2 数据库初始化 + 连接管理
 │   └── Models.kt            # 数据模型类

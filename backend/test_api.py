@@ -5,7 +5,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from AiHubBackend import app, register_blueprints
+from ai_hub_backend import app, register_blueprints
 from data.database import init_db
 
 

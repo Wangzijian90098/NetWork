@@ -15,7 +15,7 @@
 ```
 backend/
 ├── requirements.txt              # Python 依赖
-├── AiHubBackend.py                # 主入口：Flask 应用 + 服务器启动
+├── ai_hub_backend.py                # 主入口：Flask 应用 + 服务器启动
 ├── download_deps.py               # 下载 H2 JAR 的辅助脚本
 ├── data/
 │   ├── __init__.py
@@ -114,7 +114,7 @@ cd D:/NetWork/backend && pip install flask pyjwt passlib requests
 cd D:\NetWork/backend
 pip install -r requirements.txt
 python download_deps.py   # 首次运行下载 H2 JAR
-python AiHubBackend.py    # 启动服务 http://localhost:8080
+python ai_hub_backend.py    # 启动服务 http://localhost:8080
 ```
 
 后端 API 文档见 `docs/superpowers/specs/2026-04-16-backend-api-gateway-design.md`
@@ -430,7 +430,7 @@ cd D:/NetWork && git add backend/utils/jwt_util.py backend/utils/hash_util.py &&
 **Files:**
 - Create: `backend/services/auth_service.py`
 - Create: `backend/routes/auth_routes.py`
-- Modify: `backend/AiHubBackend.py`（注册蓝图）
+- Modify: `backend/ai_hub_backend.py`（注册蓝图）
 
 - [ ] **Step 1: 编写认证服务（复制以下完整代码）**
 
@@ -508,7 +508,7 @@ def login():
     return jsonify({"success": False, "message": error}), 401
 ```
 
-- [ ] **Step 3: 注册蓝图到主应用（在 AiHubBackend.py 中添加，详见 Task 8）**
+- [ ] **Step 3: 注册蓝图到主应用（在 ai_hub_backend.py 中添加，详见 Task 8）**
 
 > 暂时跳过，等 Task 8 再操作。
 
@@ -1228,10 +1228,10 @@ cd D:/NetWork && git add backend/services/proxy_service.py backend/routes/chat_r
 
 ---
 
-## Task 9: 主入口 — AiHubBackend.py
+## Task 9: 主入口 — ai_hub_backend.py
 
 **Files:**
-- Create: `backend/AiHubBackend.py`
+- Create: `backend/ai_hub_backend.py`
 
 - [ ] **Step 1: 编写主入口（复制以下完整代码）**
 
@@ -1288,7 +1288,7 @@ if __name__ == "__main__":
 - [ ] **Step 2: Commit**
 
 ```bash
-cd D:/NetWork && git add backend/AiHubBackend.py && git commit -m "feat(backend): add main entry point - Flask server startup"
+cd D:/NetWork && git add backend/ai_hub_backend.py && git commit -m "feat(backend): add main entry point - Flask server startup"
 ```
 
 ---
@@ -1308,7 +1308,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from AiHubBackend import app
+from ai_hub_backend import app
 from data.database import init_db, get_connection
 
 
