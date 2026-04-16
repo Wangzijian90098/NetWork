@@ -1,12 +1,23 @@
 """用量查询路由"""
 from flask import Blueprint, jsonify, request
-from utils.jwt_util import verify_token, extract_token_from_header
+from utils.jwt_util import verify_token
 
 usage_bp = Blueprint("usage", __name__, url_prefix="/v1")
 
 
+def get_token(req):
+    """优先从 Cookie 读取 Token，fallback 到 Authorization Header"""
+    token = req.cookies.get("token")
+    if token:
+        return token
+    auth_header = req.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        return auth_header[7:]
+    return None
+
+
 def require_auth():
-    token = extract_token_from_header(request.headers.get("Authorization"))
+    token = get_token(request)
     if not token:
         return None, jsonify({"error": "Unauthorized"}), 401
     payload = verify_token(token)

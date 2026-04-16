@@ -1,13 +1,24 @@
 """API Key 管理路由"""
 from flask import Blueprint, request, jsonify
-from utils.jwt_util import verify_token, extract_token_from_header
+from utils.jwt_util import verify_token
 
 key_bp = Blueprint("keys", __name__, url_prefix="/api/keys")
 
 
+def get_token(req):
+    """优先从 Cookie 读取 Token，fallback 到 Authorization Header（OpenAI SDK 兼容）"""
+    token = req.cookies.get("token")
+    if token:
+        return token
+    auth_header = req.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        return auth_header[7:]
+    return None
+
+
 def require_auth():
     """验证 JWT Token，返回 user_id"""
-    token = extract_token_from_header(request.headers.get("Authorization"))
+    token = get_token(request)
     if not token:
         return None, jsonify({"error": "Unauthorized"}), 401
     payload = verify_token(token)
