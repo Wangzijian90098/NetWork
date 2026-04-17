@@ -1,0 +1,87 @@
+.api-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading {
+  color: var(--muted);
+  padding: 40px;
+  text-align: center;
+}
+
+.create-card,
+.key-card,
+.empty-card {
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+}
+
+.create-card h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.create-form {
+  display: flex;
+  gap: 12px;
+}
+
+.key-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.key-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.key-info h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.key-value {
+  font-size: 13px;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.key-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-card {
+  text-align: center;
+  color: var(--muted);
+  padding: 48px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+}

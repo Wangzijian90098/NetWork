@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import APIKeys from './pages/APIKeys';
 
 function App() {
   return (
@@ -16,11 +17,7 @@ function App() {
           </div>
         } />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="api-keys" element={
-          <div style={{ color: '#fff', padding: '20px' }}>
-            <h1>API Keys</h1>
-          </div>
-        } />
+        <Route path="api-keys" element={<APIKeys />} />
         <Route path="settings" element={
           <div style={{ color: '#fff', padding: '20px' }}>
             <h1>Settings</h1>
