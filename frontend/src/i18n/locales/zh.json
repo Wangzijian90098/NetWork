@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "dashboard": "控制台",
+    "apiKeys": "API Keys",
+    "settings": "设置"
+  },
+  "dashboard": {
+    "balance": "账户余额",
+    "remain": "剩余额度",
+    "activeKeys": "活跃密钥",
+    "monthlyUsage": "本月用量",
+    "quickStart": "快速开始"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "name": "名称"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "apiKeys": "API Keys",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "balance": "Balance",
+    "remain": "Remain",
+    "activeKeys": "Active Keys",
+    "monthlyUsage": "Monthly Usage",
+    "quickStart": "Quick Start"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name"
+  }
+}
