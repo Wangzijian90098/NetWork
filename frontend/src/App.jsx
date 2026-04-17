@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 
 function App() {
   return (
@@ -28,11 +30,8 @@ function App() {
           </div>
         } />
       </Route>
-      <Route path="login" element={
-        <div style={{ background: '#0a0f1a', minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#fff' }}>
-          <h1>Login Page</h1>
-        </div>
-      } />
+      <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
     </Routes>
   );
 }
