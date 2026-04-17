@@ -1,33 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #0a0f1a;
-  --panel: #111827;
-  --panel-2: #0f172a;
-  --text: #ffffff;
-  --muted: #94a3b8;
-  --line: #1f2937;
-  --primary: #3b82f6;
-  --secondary: #8b5cf6;
-  --success: #22c55e;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  /* Cyberpunk Color Palette */
+  --bg-deep: #05080f;
+  --bg: #0a0e14;
+  --bg-elevated: #0f1419;
+  --panel: #141b24;
+  --panel-hover: #1a232e;
+  --text: #e4e8ef;
+  --text-muted: #6b7a8d;
+  --text-dim: #3d4a5c;
+  --line: #1e2732;
+  --line-bright: #2a3544;
+
+  /* Accent Colors - Neon */
+  --primary: #00d4ff;
+  --primary-dim: #0099bb;
+  --primary-glow: rgba(0, 212, 255, 0.3);
+  --secondary: #bf5af2;
+  --secondary-dim: #8b3dc4;
+  --secondary-glow: rgba(191, 90, 242, 0.3);
+
+  /* Status Colors */
+  --success: #30d158;
+  --success-dim: #22a340;
+  --success-glow: rgba(48, 209, 88, 0.3);
+  --danger: #ff453a;
+  --danger-dim: #cc382e;
+  --danger-glow: rgba(255, 69, 58, 0.3);
+  --warning: #ffd60a;
+  --warning-dim: #ccab08;
+
+  /* Effects */
+  --glow-sm: 0 0 10px;
+  --glow-md: 0 0 20px;
+  --glow-lg: 0 0 40px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-bright);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Gradient Text with Glow */
 .gradient-text {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.text-glow {
+  text-shadow: var(--glow-sm) var(--primary-glow);
+}
+
+.text-glow-secondary {
+  text-shadow: var(--glow-sm) var(--secondary-glow);
+}
+
+/* Neon Border */
+.neon-border {
+  position: relative;
+  border: 1px solid var(--line);
+  transition: all 0.3s ease;
+}
+
+.neon-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.neon-border:hover::before {
+  opacity: 1;
+}
+
+/* Glow Effects */
+.glow-primary {
+  box-shadow: var(--glow-sm) var(--primary-glow),
+              inset 0 0 20px var(--primary-glow);
+}
+
+.glow-secondary {
+  box-shadow: var(--glow-sm) var(--secondary-glow),
+              inset 0 0 20px var(--secondary-glow);
+}
+
+/* Animated Background */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.bg-noise {
+  position: relative;
+}
+
+.bg-noise::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Terminal Cursor Animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+/* Pulse Glow Animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: var(--glow-sm) var(--primary-glow);
+  }
+  50% {
+    box-shadow: var(--glow-md) var(--primary-glow);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Slide In Animation */
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in-up 0.5s ease-out forwards;
+}
+
+/* Staggered Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }

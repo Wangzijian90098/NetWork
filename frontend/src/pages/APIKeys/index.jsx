@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Input } from '@douyinfe/semi-ui';
-import { Plus, Copy, Trash2, Check } from 'lucide-react';
+import { Card, Button, Input, Toast } from '@douyinfe/semi-ui';
+import { Plus, Copy, Trash2, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../../services/api';
 import './APIKeys.css';
 
@@ -9,7 +9,7 @@ function APIKeys() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
-  const [copiedId, setCopiedId] = useState(null);
+  const [revealedKeys, setRevealedKeys] = useState({});
 
   useEffect(() => {
     loadTokens();
@@ -18,7 +18,7 @@ function APIKeys() {
   const loadTokens = async () => {
     try {
       const { data } = await apiService.getTokens();
-      setTokens(data.tokens || []);
+      setTokens(data.items || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -33,8 +33,9 @@ function APIKeys() {
       const { data } = await apiService.createToken(newKeyName);
       setTokens([data, ...tokens]);
       setNewKeyName('');
+      Toast.success('API Key 创建成功');
     } catch (err) {
-      alert('创建失败');
+      Toast.error('创建失败');
     } finally {
       setCreating(false);
     }
@@ -45,15 +46,39 @@ function APIKeys() {
     try {
       await apiService.deleteToken(id);
       setTokens(tokens.filter((t) => t.id !== id));
+      Toast.success('删除成功');
     } catch (err) {
-      alert('删除失败');
+      Toast.error('删除失败');
     }
   };
 
-  const handleCopy = (key, id) => {
+  const handleCopy = (key) => {
+    if (!key) return;
     navigator.clipboard.writeText(key);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    Toast.success('已复制到剪贴板');
+  };
+
+  const handleReveal = async (tokenId) => {
+    if (revealedKeys[tokenId]) {
+      const newRevealed = { ...revealedKeys };
+      delete newRevealed[tokenId];
+      setRevealedKeys(newRevealed);
+      return;
+    }
+    try {
+      const { data } = await apiService.getTokenKey(tokenId);
+      setRevealedKeys({ ...revealedKeys, [tokenId]: data.key });
+    } catch (err) {
+      Toast.error('获取 Key 失败');
+    }
+  };
+
+  const getDisplayKey = (token) => {
+    if (revealedKeys[token.id]) {
+      return revealedKeys[token.id];
+    }
+    const masked = token.unmasked_key || '';
+    return masked ? `${masked.slice(0, 8)}...${masked.slice(-4)}` : 'sk-***...****';
   };
 
   return (
@@ -64,7 +89,7 @@ function APIKeys() {
           <Input
             placeholder="Key 名称（如：开发环境）"
             value={newKeyName}
-            onChange={setNewKeyName}
+            onChange={(val) => setNewKeyName(val)}
             style={{ flex: 1 }}
           />
           <Button
@@ -91,21 +116,21 @@ function APIKeys() {
               <div className="key-info">
                 <h3>{token.name}</h3>
                 <code className="key-value">
-                  {token.key.slice(0, 8)}...{token.key.slice(-4)}
+                  {getDisplayKey(token)}
                 </code>
               </div>
               <div className="key-actions">
                 <Button
                   size="small"
                   theme="borderless"
-                  icon={
-                    copiedId === token.id ? (
-                      <Check size={16} />
-                    ) : (
-                      <Copy size={16} />
-                    )
-                  }
-                  onClick={() => handleCopy(token.key, token.id)}
+                  icon={revealedKeys[token.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                  onClick={() => handleReveal(token.id)}
+                />
+                <Button
+                  size="small"
+                  theme="borderless"
+                  icon={<Copy size={16} />}
+                  onClick={() => handleCopy(revealedKeys[token.id] || token.unmasked_key)}
                 />
                 <Button
                   size="small"

@@ -1,19 +1,24 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: '/api',
+  withCredentials: true, // 允许携带 Cookie
 });
 
 export const authService = {
-  login: (email, password) =>
-    api.post('/user/login', { email, password }),
+  // 登录 - New API 使用 username 字段
+  login: (username, password) =>
+    api.post('/user/login', { username, password }),
 
-  register: (email, password, name) =>
-    api.post('/user/register', { email, password, name }),
+  // 注册
+  register: (username, password, email) =>
+    api.post('/user/register', { username, password, email }),
 
-  getUserInfo: () =>
-    api.get('/user/info'),
+  // 获取当前用户信息
+  getSelf: () =>
+    api.get('/user/self'),
 
+  // 退出登录
   logout: () =>
-    api.post('/user/logout'),
+    api.get('/user/logout'),
 };

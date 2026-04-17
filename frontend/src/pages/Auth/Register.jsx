@@ -5,9 +5,9 @@ import { authService } from '../../services/auth';
 import '../Auth/Auth.css';
 
 function Register() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,11 +15,11 @@ function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await authService.register(email, password, name);
-      localStorage.setItem('token', data.token);
+      await authService.register(username, password, email);
+      // New API 使用 Cookie 认证
       navigate('/app/dashboard');
     } catch (err) {
-      alert(err.response?.data?.error || '注册失败');
+      alert(err.response?.data?.message || err.response?.data?.error || '注册失败');
     } finally {
       setLoading(false);
     }
@@ -33,11 +33,11 @@ function Register() {
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label>名称</label>
+            <label>用户名</label>
             <Input
-              value={name}
-              onChange={(v) => setName(v)}
-              placeholder="您的名称"
+              value={username}
+              onChange={(v) => setUsername(v)}
+              placeholder="用户名"
               required
             />
           </div>

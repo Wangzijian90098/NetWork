@@ -5,7 +5,7 @@ import { authService } from '../../services/auth';
 import '../Auth/Auth.css';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -14,11 +14,12 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await authService.login(email, password);
-      localStorage.setItem('token', data.token);
+      const { data } = await authService.login(username, password);
+      // 存储用户 ID 用于后续请求
+      localStorage.setItem('userId', data.id);
       navigate('/app/dashboard');
     } catch (err) {
-      alert(err.response?.data?.error || '登录失败');
+      alert(err.response?.data?.message || err.response?.data?.error || '登录失败');
     } finally {
       setLoading(false);
     }
@@ -32,12 +33,11 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label>邮箱</label>
+            <label>用户名</label>
             <Input
-              type="email"
-              value={email}
-              onChange={(v) => setEmail(v)}
-              placeholder="your@email.com"
+              value={username}
+              onChange={(v) => setUsername(v)}
+              placeholder="用户名"
               required
             />
           </div>

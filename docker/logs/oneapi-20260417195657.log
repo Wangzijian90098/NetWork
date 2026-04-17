@@ -1,0 +1,7 @@
+[SYS] 2026/04/17 - 19:56:57 | initializing token encoders 
+[SYS] 2026/04/17 - 19:56:57 | token encoders initialized 
+[SYS] 2026/04/17 - 19:56:57 | using PostgreSQL as database 
+[SYS] 2026/04/17 - 19:56:57 | database migration started 
+[FATAL] 2026/04/17 - 19:56:57 | [failed to initialize database: failed to connect to `user=root database=new-api`:
+	172.18.0.5:5432 (postgres): tls error: server refused TLS connection
+	172.18.0.5:5432 (postgres): server error: FATAL: the database system is starting up (SQLSTATE 57P03)] 
