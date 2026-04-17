@@ -1,44 +1,59 @@
-import { useState, useEffect } from 'react';
 import { Card } from '@douyinfe/semi-ui';
-import { apiService } from '../../services/api';
 import { Coins, Zap, Key, TrendingUp } from 'lucide-react';
+import { useDashboardData } from './hooks/useDashboardData';
+import UsageTrendChart from './components/UsageTrendChart';
+import ModelDistribution from './components/ModelDistribution';
+import RequestStats from './components/RequestStats';
+import BalanceAlert from './components/BalanceAlert';
 import './Dashboard.css';
 
 function Dashboard() {
-  const [userInfo, setUserInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    userInfo,
+    loading,
+    error,
+    usageData,
+    modelDistribution,
+    requestStats,
+  } = useDashboardData();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  if (loading) {
+    return (
+      <div className="dashboard">
+        <div className="loading-container">
+          <div className="loading-spinner" />
+          <span>加载中...</span>
+        </div>
+      </div>
+    );
+  }
 
-  const loadData = async () => {
-    try {
-      const { data } = await apiService.getUserInfo();
-      setUserInfo(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <div className="loading">加载中...</div>;
+  if (error) {
+    return (
+      <div className="dashboard">
+        <div className="error-container">
+          <span>加载失败</span>
+          <button onClick={() => window.location.reload()}>重试</button>
+        </div>
+      </div>
+    );
+  }
 
   const quota = userInfo?.quota || 0;
-  const usedQuota = userInfo?.usedQuota || 0;
+  const usedQuota = userInfo?.used_quota || 0;
   const remainQuota = quota - usedQuota;
 
   return (
     <div className="dashboard">
+      {/* 顶部指标卡片 */}
       <div className="grid-4">
         <Card className="metric-card">
           <div className="metric-icon">
             <Coins size={24} />
           </div>
           <div className="metric-label">账户余额</div>
-          <div className="metric-value">{quota.toLocaleString()}</div>
-          <div className="metric-sub">约 ¥{(quota / 1000000 * 7).toFixed(2)}</div>
+          <div className="metric-value">{(quota / 1000000 * 7).toFixed(2)}</div>
+          <div className="metric-sub">USD</div>
         </Card>
 
         <Card className="metric-card">
@@ -47,53 +62,40 @@ function Dashboard() {
           </div>
           <div className="metric-label">剩余额度</div>
           <div className="metric-value gradient-text">
-            {remainQuota.toLocaleString()}
+            {(remainQuota / 1000000 * 7).toFixed(2)}
           </div>
-          <div className="metric-sub">可用额度</div>
+          <div className="metric-sub">USD 可用</div>
         </Card>
 
         <Card className="metric-card">
-          <div className="metric-icon">
+          <div className="metric-icon warning">
             <Key size={24} />
           </div>
-          <div className="metric-label">API Keys</div>
-          <div className="metric-value">{userInfo?.tokenCount || 0}</div>
-          <div className="metric-sub">活跃密钥</div>
+          <div className="metric-label">已用额度</div>
+          <div className="metric-value">{(usedQuota / 1000000 * 7).toFixed(2)}</div>
+          <div className="metric-sub">USD</div>
         </Card>
 
         <Card className="metric-card">
           <div className="metric-icon success">
             <TrendingUp size={24} />
           </div>
-          <div className="metric-label">本月用量</div>
-          <div className="metric-value">{usedQuota.toLocaleString()}</div>
-          <div className="metric-sub">Token 消耗</div>
+          <div className="metric-label">请求次数</div>
+          <div className="metric-value">{userInfo?.request_count || 0}</div>
+          <div className="metric-sub">总请求</div>
         </Card>
       </div>
 
+      {/* 图表区域 */}
       <div className="content-grid">
-        <Card className="panel">
-          <h2>快速开始</h2>
-          <div className="quick-start">
-            <p>使用以下端点接入 AI 模型：</p>
-            <pre className="code-block">
-{`curl https://api.network.ai/v1/chat/completions \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"model": "gpt-4o", "messages": [...]}'`}
-            </pre>
-          </div>
-        </Card>
+        <UsageTrendChart data={usageData} />
+        <ModelDistribution data={modelDistribution} />
+      </div>
 
-        <Card className="panel">
-          <h2>可用模型</h2>
-          <ul className="model-list">
-            <li><span className="tag">GPT-4o</span> OpenAI</li>
-            <li><span className="tag">Claude 3.5</span> Anthropic</li>
-            <li><span className="tag">Gemini Pro</span> Google</li>
-            <li><span className="tag">DeepSeek V3</span> DeepSeek</li>
-          </ul>
-        </Card>
+      {/* 统计和预警 */}
+      <div className="stats-grid">
+        <RequestStats stats={requestStats} />
+        <BalanceAlert userInfo={userInfo} />
       </div>
     </div>
   );
