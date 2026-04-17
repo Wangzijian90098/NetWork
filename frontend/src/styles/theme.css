@@ -1,0 +1,51 @@
+/* NetWork AI 主题变量 */
+
+:root {
+  /* 背景色 */
+  --bg-primary: #0a0f1a;
+  --bg-secondary: #111827;
+  --bg-tertiary: #0f172a;
+  --bg-elevated: #1a2332;
+
+  /* 文字颜色 */
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* 边框颜色 */
+  --border-default: #1f2937;
+  --border-hover: #374151;
+
+  /* 主题色 */
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #8b5cf6;
+  --secondary-hover: #7c3aed;
+
+  /* 状态色 */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #06b6d4;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 20px 60px rgba(59, 130, 246, 0.15);
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
+
+/* 渐变效果 */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.gradient-border {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
