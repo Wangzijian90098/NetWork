@@ -55,11 +55,11 @@ public class KeyService {
                     if (!Boolean.TRUE.equals(key.getIsActive())) {
                         return null;
                     }
-                    return Map.of(
-                            "id", key.getId(),
-                            "userId", key.getUserId(),
-                            "isActive", key.getIsActive()
-                    );
+                    Map<String, Object> result = new java.util.HashMap<>();
+                    result.put("id", key.getId());
+                    result.put("userId", key.getUserId());
+                    result.put("isActive", key.getIsActive());
+                    return result;
                 })
                 .orElse(null);
     }
@@ -71,12 +71,12 @@ public class KeyService {
     }
 
     private Map<String, Object> toMap(ApiKey key) {
-        return Map.of(
-                "id", key.getId(),
-                "name", key.getName() != null ? key.getName() : "API Key",
-                "apiKey", key.getApiKey(),
-                "isActive", key.getIsActive(),
-                "createdAt", key.getCreatedAt() != null ? key.getCreatedAt().toString() : ""
-        );
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("id", key.getId());
+        result.put("name", key.getName() != null ? key.getName() : "API Key");
+        result.put("apiKey", key.getApiKey());
+        result.put("isActive", key.getIsActive());
+        result.put("createdAt", key.getCreatedAt() != null ? key.getCreatedAt().toString() : "");
+        return result;
     }
 }

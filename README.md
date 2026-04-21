@@ -13,32 +13,78 @@
 
 ```
 NetWork/
-├── landing.html           # 官网首页（粒子背景、模型展示）
-├── login.html             # 登录页
-├── dashboard.html         # 控制台概览
-├── api-keys.html          # API Key 管理
-├── assets/                # 公共资源
-│   ├── console.css
-│   └── console.js
-├── backend/              # Python Flask 后端
-│   ├── ai_hub_backend.py  # 主入口
-│   ├── requirements.txt
-│   ├── data/              # 数据库层
-│   ├── models/            # 数据模型
+├── frontend/              # React 前端应用
+│   ├── src/
+│   │   ├── components/    # UI 组件
+│   │   ├── pages/         # 页面组件
+│   │   ├── services/      # API 服务
+│   │   ├── hooks/         # React Hooks
+│   │   ├── i18n/          # 国际化
+│   │   └── styles/        # 样式文件
+│   └── dist/              # 构建输出
+│
+├── java-backend/          # Java Spring Boot 后端（主服务）
+│   ├── src/main/java/com/aihub/
+│   │   ├── controller/    # REST 控制器
+│   │   ├── service/       # 业务逻辑层
+│   │   ├── repository/    # 数据访问层
+│   │   ├── entity/        # 实体模型
+│   │   ├── dto/           # 数据传输对象
+│   │   ├── security/      # 安全配置（JWT/Spring Security）
+│   │   ├── config/        # 配置类
+│   │   └── util/          # 工具类
+│   ├── src/main/resources/
+│   │   └── application.yml
+│   ├── pom.xml
+│   ├── build.sh           # 构建脚本
+│   └── run.sh             # 启动脚本
+│
+├── backend/               # Python Flask 后端（备用）
+│   ├── ai_hub_backend.py
 │   ├── routes/            # 路由（auth/key/chat/admin/usage）
 │   ├── services/          # 业务逻辑
-│   └── utils/             # 工具类（JWT/BCrypt）
-└── docs/                  # 设计文档与计划
+│   ├── models/            # 数据模型
+│   ├── utils/             # 工具类
+│   └── data/              # 数据库
+│
+├── new-api/               # Go API 服务
+│   ├── main.go
+│   ├── controller/
+│   ├── service/
+│   ├── model/
+│   └── router/
+│
+├── worker/                # Worker 服务
+│   └── src/
+│
+├── docker/                # Docker 配置
+│   ├── data/
+│   └── logs/
+│
+├── assets/                # 静态资源
+│   ├── console.css
+│   └── console.js
+│
+├── landing.html           # 落地页
+├── login.html             # 登录页
+├── dashboard.html         # 控制台
+├── api-keys.html          # Key 管理
+│
+├── docs/                  # 文档
+└── memory/                # AI 记忆系统
 ```
 
 ## 技术栈
 
 | 层 | 技术 |
 |----|------|
-| 前端 | HTML5 + CSS3 + Vanilla JavaScript, Canvas 粒子背景 |
-| 后端 | Python 3 + Flask + SQLite (H2 兼容) |
+| 前端 | React 18 + Vite + HTML5/CSS3 |
+| 主后端 | Java 17 + Spring Boot 3.2 + Spring Security + JPA |
+| 备用后端 | Python 3 + Flask |
+| API 服务 | Go + Gin |
+| 数据库 | MySQL 8.0 |
 | 认证 | JWT + BCrypt |
-| 部署 | Cloudflare Pages（前端） |
+| 部署 | Cloudflare Pages（前端）+ Docker（后端） |
 
 ---
 
@@ -55,22 +101,38 @@ NetWork/
 
 ## 本地运行
 
-**前端：**
+**前端（React）：**
+```bash
+cd D:\NetWork\frontend
+npm install
+npm run dev
+# 浏览器打开 http://localhost:5173/
+```
+
+**前端（静态页面）：**
 ```bash
 cd D:\NetWork
 python -m http.server 8090
 # 浏览器打开 http://127.0.0.1:8090/
 ```
 
-**后端：**
+**Java 后端（推荐）：**
 ```bash
-cd D:\NetWork/backend
+cd D:\NetWork\java-backend
+# 首次运行需配置 MySQL，参考 mysql-setup.md
+./build.sh   # 构建项目
+./run.sh     # 启动服务 http://localhost:8080
+```
+
+**Python 后端：**
+```bash
+cd D:\NetWork\backend
 pip install -r requirements.txt
 python download_deps.py   # 首次运行下载 H2 JAR
 python ai_hub_backend.py  # 启动服务 http://localhost:8080
 ```
 
-> 后端默认管理员：admin@aihubs.com / admin123
+> 默认管理员账号：admin@aihubs.com / admin123
 
 ---
 
@@ -78,8 +140,16 @@ python ai_hub_backend.py  # 启动服务 http://localhost:8080
 
 - [x] 落地页已完成
 - [x] 控制台框架已完成
-- [x] 后端 API 网关已完成
-- [ ] 前端对接后端（真实 API）
+- [x] Java Spring Boot 后端已完成
+  - [x] 用户认证（JWT + Spring Security）
+  - [x] API Key 管理
+  - [x] 聊天代理服务（区域路由）
+  - [x] 使用统计
+  - [x] 管理员功能
+  - [x] 数据初始化
+- [x] Python Flask 后端已完成（备用）
+- [ ] React 前端开发中
+- [ ] 前后端完整对接
 - [ ] Cloudflare Workers 自动配置
 
 ---

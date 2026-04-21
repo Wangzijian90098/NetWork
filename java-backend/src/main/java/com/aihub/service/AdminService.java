@@ -25,13 +25,15 @@ public class AdminService {
 
     public List<Map<String, Object>> getUsers() {
         return userRepository.findAll().stream()
-                .map(u -> Map.of(
-                        "id", u.getId(),
-                        "email", u.getEmail() != null ? u.getEmail() : "",
-                        "balance", u.getBalance(),
-                        "role", u.getRole(),
-                        "region", u.getRegion() != null ? u.getRegion() : ""
-                ))
+                .map(u -> {
+                    Map<String, Object> result = new java.util.HashMap<>();
+                    result.put("id", u.getId());
+                    result.put("email", u.getEmail() != null ? u.getEmail() : "");
+                    result.put("balance", u.getBalance());
+                    result.put("role", u.getRole());
+                    result.put("region", u.getRegion() != null ? u.getRegion() : "");
+                    return result;
+                })
                 .toList();
     }
 
@@ -52,13 +54,15 @@ public class AdminService {
 
     public List<Map<String, Object>> getPlatformKeys() {
         return platformKeyRepository.findAll().stream()
-                .map(pk -> Map.of(
-                        "id", pk.getId(),
-                        "platform", pk.getPlatform(),
-                        "apiKey", pk.getApiKey(),
-                        "region", pk.getRegion() != null ? pk.getRegion() : "",
-                        "isActive", pk.getIsActive()
-                ))
+                .map(pk -> {
+                    Map<String, Object> result = new java.util.HashMap<>();
+                    result.put("id", pk.getId());
+                    result.put("platform", pk.getPlatform());
+                    result.put("apiKey", pk.getApiKey());
+                    result.put("region", pk.getRegion() != null ? pk.getRegion() : "");
+                    result.put("isActive", pk.getIsActive());
+                    return result;
+                })
                 .toList();
     }
 

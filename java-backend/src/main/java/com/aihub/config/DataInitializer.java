@@ -28,11 +28,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Initialize admin user
-        if (userRepository.findByUsername("admin").isEmpty()) {
+        if (userRepository.findByEmail("admin@aihubs.com").isEmpty()) {
             User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setEmail("admin@aihubs.com");
+            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setBalance(new BigDecimal("9999.00"));
             admin.setRole("admin");
             userRepository.save(admin);
