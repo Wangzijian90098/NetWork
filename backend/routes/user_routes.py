@@ -5,12 +5,22 @@ from utils.jwt_util import verify_token
 user_bp = Blueprint("user", __name__, url_prefix="/api/user")
 
 
+def _get_token():
+    """优先从 Cookie 读取 Token，fallback 到 Authorization Header"""
+    token = request.cookies.get("token")
+    if token:
+        return token
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        return auth_header[7:]
+    return None
+
+
 def _get_user_from_token():
     """从请求头提取并验证用户。返回 (payload, error_resp, status)"""
-    auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
+    token = _get_token()
+    if not token:
         return None, jsonify({"success": False, "message": "Unauthorized"}), 401
-    token = auth_header[7:]
     payload = verify_token(token)
     if not payload:
         return None, jsonify({"success": False, "message": "Invalid token"}), 401
