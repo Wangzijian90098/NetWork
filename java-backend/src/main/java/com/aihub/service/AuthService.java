@@ -34,6 +34,7 @@ public class AuthService {
         }
 
         User user = new User();
+        user.setUsername(request.getEmail());  // 使用 email 作为 username
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setBalance(new BigDecimal("10.00"));  // 新用户送 $10
