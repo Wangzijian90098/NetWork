@@ -2,6 +2,7 @@ package com.aihub.controller;
 
 import com.aihub.dto.response.ApiResponse;
 import com.aihub.service.AdminService;
+import com.aihub.service.KeyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,15 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
     private final AdminService adminService;
+    private final KeyService keyService;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, KeyService keyService) {
         this.adminService = adminService;
+        this.keyService = keyService;
     }
 
     @GetMapping("/users")
@@ -59,5 +63,12 @@ public class AdminController {
             return ResponseEntity.ok(ApiResponse.success("已删除"));
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/sync")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> syncToWorkers() {
+        List<Map<String, Object>> keyData = keyService.getAllActiveKeys();
+
+        return ResponseEntity.ok(ApiResponse.success("同步成功", Map.of("keys", keyData)));
     }
 }

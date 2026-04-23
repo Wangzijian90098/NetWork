@@ -70,6 +70,17 @@ public class KeyService {
         return "sk-aihub-" + Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
+    public List<Map<String, Object>> getAllActiveKeys() {
+        return apiKeyRepository.findAll().stream()
+                .filter(key -> Boolean.TRUE.equals(key.getIsActive()))
+                .map(key -> Map.<String, Object>of(
+                        "key", key.getApiKey(),
+                        "name", key.getName() != null ? key.getName() : "",
+                        "enabled", Boolean.TRUE.equals(key.getIsActive())
+                ))
+                .toList();
+    }
+
     private Map<String, Object> toMap(ApiKey key) {
         Map<String, Object> result = new java.util.HashMap<>();
         result.put("id", key.getId());
