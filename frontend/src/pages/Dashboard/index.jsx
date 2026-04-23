@@ -17,6 +17,7 @@ function Dashboard() {
     modelDistribution,
     requestStats,
     usageStats,
+    reload,
   } = useDashboardData();
 
   if (loading) {
@@ -35,7 +36,7 @@ function Dashboard() {
       <div className="dashboard">
         <div className="error-container">
           <span>加载失败</span>
-          <button onClick={() => window.location.reload()}>重试</button>
+          <button onClick={reload}>重试</button>
         </div>
       </div>
     );
@@ -43,7 +44,7 @@ function Dashboard() {
 
   const quota = usageStats?.quota || 0;
   const usedQuota = usageStats?.used_quota || 0;
-  const remainQuota = quota - usedQuota;
+  const remainQuota = Math.max(0, quota - usedQuota);
 
   return (
     <div className="dashboard">

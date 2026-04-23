@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiService } from '../../../services/api';
 
 export function useDashboardData() {
@@ -8,11 +8,7 @@ export function useDashboardData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [trendRes, modelRes, statsRes] = await Promise.all([
@@ -29,7 +25,11 @@ export function useDashboardData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   // 模拟数据（后端未提供时使用）
   const generateMockUsageData = () => {
