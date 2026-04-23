@@ -1,25 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button } from '@douyinfe/semi-ui';
-import { authService } from '../../services/auth';
+import { useAuth } from '../../hooks/useAuth';
 import '../Auth/Auth.css';
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await authService.login(username, password);
-      // 存储用户 ID 用于后续请求
-      localStorage.setItem('userId', data.id);
-      navigate('/app/dashboard');
+      const result = await login(email, password);
+      if (result.success) {
+        navigate('/');
+      }
     } catch (err) {
-      alert(err.response?.data?.message || err.response?.data?.error || '登录失败');
+      alert(err.response?.data?.message || '登录失败');
     } finally {
       setLoading(false);
     }
@@ -33,11 +34,12 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label>用户名</label>
+            <label>邮箱</label>
             <Input
-              value={username}
-              onChange={(v) => setUsername(v)}
-              placeholder="用户名"
+              value={email}
+              onChange={(v) => setEmail(v)}
+              placeholder="your@email.com"
+              type="email"
               required
             />
           </div>
