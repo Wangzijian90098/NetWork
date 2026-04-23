@@ -12,7 +12,7 @@ export const authService = {
   register: (email, password) =>
     api.post('/auth/register', { email, password }),
 
-  getSelf: () =>
+  getCurrentUser: () =>
     api.get('/auth/me'),
 
   logout: () =>
