@@ -1,25 +1,36 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button } from '@douyinfe/semi-ui';
-import { authService } from '../../services/auth';
+import { useAuth } from '../../hooks/useAuth';
 import '../Auth/Auth.css';
 
 function Register() {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('两次密码不一致');
+      return;
+    }
     setLoading(true);
+    setError('');
     try {
-      await authService.register(username, password, email);
-      // New API 使用 Cookie 认证
-      navigate('/app/dashboard');
+      const result = await register(email, password);
+      if (result.success) {
+        alert('注册成功，请登录');
+        navigate('/login');
+      } else {
+        setError(result.message || '注册失败');
+      }
     } catch (err) {
-      alert(err.response?.data?.message || err.response?.data?.error || '注册失败');
+      setError(err.response?.data?.message || '注册失败');
     } finally {
       setLoading(false);
     }
@@ -29,26 +40,18 @@ function Register() {
     <div className="auth-shell">
       <div className="auth-card">
         <h1>注册</h1>
-        <p>创建您的账户</p>
+        <p>创建新账户</p>
 
         <form onSubmit={handleSubmit}>
-          <div className="field">
-            <label>用户名</label>
-            <Input
-              value={username}
-              onChange={(v) => setUsername(v)}
-              placeholder="用户名"
-              required
-            />
-          </div>
+          {error && <div className="error-message">{error}</div>}
 
           <div className="field">
             <label>邮箱</label>
             <Input
-              type="email"
               value={email}
               onChange={(v) => setEmail(v)}
               placeholder="your@email.com"
+              type="email"
               required
             />
           </div>
@@ -59,7 +62,18 @@ function Register() {
               type="password"
               value={password}
               onChange={(v) => setPassword(v)}
-              placeholder="••••••••"
+              placeholder="至少 6 位"
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label>确认密码</label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(v) => setConfirmPassword(v)}
+              placeholder="再次输入密码"
               required
             />
           </div>
