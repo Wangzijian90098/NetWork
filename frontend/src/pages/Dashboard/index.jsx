@@ -11,12 +11,12 @@ import './Dashboard.css';
 function Dashboard() {
   const { user } = useAuth();
   const {
-    userInfo,
     loading,
     error,
     usageData,
     modelDistribution,
     requestStats,
+    usageStats,
   } = useDashboardData();
 
   if (loading) {
@@ -41,8 +41,8 @@ function Dashboard() {
     );
   }
 
-  const quota = userInfo?.quota || 0;
-  const usedQuota = userInfo?.used_quota || 0;
+  const quota = usageStats?.quota || 0;
+  const usedQuota = usageStats?.used_quota || 0;
   const remainQuota = quota - usedQuota;
 
   return (
@@ -89,7 +89,7 @@ function Dashboard() {
             <TrendingUp size={24} />
           </div>
           <div className="metric-label">请求次数</div>
-          <div className="metric-value">{userInfo?.request_count || 0}</div>
+          <div className="metric-value">{usageStats?.request_count || 0}</div>
           <div className="metric-sub">总请求</div>
         </Card>
       </div>
@@ -103,7 +103,7 @@ function Dashboard() {
       {/* 统计和预警 */}
       <div className="stats-grid">
         <RequestStats stats={requestStats} />
-        <BalanceAlert userInfo={userInfo} />
+        <BalanceAlert userInfo={usageStats} />
       </div>
     </div>
   );

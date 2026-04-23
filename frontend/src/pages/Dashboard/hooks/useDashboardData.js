@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { apiService } from '../../../services/api';
 
 export function useDashboardData() {
-  const [userInfo, setUserInfo] = useState(null);
   const [usageData, setUsageData] = useState([]);
+  const [modelDistributionData, setModelDistributionData] = useState([]);
+  const [usageStats, setUsageStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,15 +15,14 @@ export function useDashboardData() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [userRes, usageRes] = await Promise.all([
-        apiService.getUserInfo(),
-        apiService.getUsage(
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          new Date().toISOString().split('T')[0]
-        ),
+      const [trendRes, modelRes, statsRes] = await Promise.all([
+        apiService.getUsageTrend(7),
+        apiService.getModelDistribution(),
+        apiService.getUsageStats(),
       ]);
-      setUserInfo(userRes.data);
-      setUsageData(usageRes.data?.items || generateMockUsageData());
+      setUsageData(trendRes.data?.items || generateMockUsageData());
+      setModelDistributionData(modelRes.data || []);
+      setUsageStats(statsRes.data || getDefaultStats());
     } catch (err) {
       setError(err);
       console.error(err);
@@ -44,28 +44,8 @@ export function useDashboardData() {
     }));
   };
 
-  // 模型分布数据
-  const getModelDistribution = () => {
-    if (!usageData.length) return [];
-    const totals = usageData.reduce(
-      (acc, day) => ({
-        gpt4: acc.gpt4 + (day.gpt4 || 0),
-        claude: acc.claude + (day.claude || 0),
-        gemini: acc.gemini + (day.gemini || 0),
-        deepseek: acc.deepseek + (day.deepseek || 0),
-      }),
-      { gpt4: 0, claude: 0, gemini: 0, deepseek: 0 }
-    );
-    return [
-      { name: 'GPT-4o', value: totals.gpt4, color: '#10B981' },
-      { name: 'Claude', value: totals.claude, color: '#8B5CF6' },
-      { name: 'Gemini', value: totals.gemini, color: '#F59E0B' },
-      { name: 'DeepSeek', value: totals.deepseek, color: '#3B82F6' },
-    ];
-  };
-
-  // 请求统计
-  const getRequestStats = () => {
+  // 默认统计（后端未提供时使用）
+  const getDefaultStats = () => {
     const todayRequests = Math.floor(Math.random() * 500) + 100;
     const monthRequests = Math.floor(Math.random() * 8000) + 2000;
     const successRate = 0.95 + Math.random() * 0.04;
@@ -76,12 +56,21 @@ export function useDashboardData() {
     };
   };
 
+  // 请求统计
+  const getRequestStats = () => {
+    return {
+      today: usageStats?.today || getDefaultStats().today,
+      month: usageStats?.month || getDefaultStats().month,
+      successRate: usageStats?.successRate || getDefaultStats().successRate,
+    };
+  };
+
   return {
-    userInfo,
+    usageStats,
     usageData,
     loading,
     error,
-    modelDistribution: getModelDistribution(),
+    modelDistribution: modelDistributionData,
     requestStats: getRequestStats(),
     reload: loadData,
   };
