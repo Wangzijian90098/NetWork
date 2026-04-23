@@ -8,19 +8,23 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
     try {
       const result = await login(email, password);
       if (result.success) {
         navigate('/');
+      } else {
+        setError(result.message || '登录失败');
       }
     } catch (err) {
-      alert(err.response?.data?.message || '登录失败');
+      setError(err.response?.data?.message || '登录失败');
     } finally {
       setLoading(false);
     }
@@ -54,6 +58,8 @@ function Login() {
               required
             />
           </div>
+
+          {error && <div className="error-message">{error}</div>}
 
           <Button
             type="submit"
