@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      const { data } = await authService.getSelf();
+      const { data } = await authService.getCurrentUser();
       if (data.success) {
         setUser(data.data);
       }
