@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Input, Button } from '@douyinfe/semi-ui';
+import { Input, Button, Toast } from '@douyinfe/semi-ui';
 import { useAuth } from '../../hooks/useAuth';
 import '../Auth/Auth.css';
 
@@ -15,6 +15,15 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('请输入有效的邮箱地址');
+      return;
+    }
+    if (password.length < 6) {
+      setError('密码至少需要 6 位');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('两次密码不一致');
       return;
@@ -24,7 +33,7 @@ function Register() {
     try {
       const result = await register(email, password);
       if (result.success) {
-        alert('注册成功，请登录');
+        Toast.success('注册成功，请登录');
         navigate('/login');
       } else {
         setError(result.message || '注册失败');
@@ -82,6 +91,7 @@ function Register() {
             type="submit"
             className="btn-primary"
             loading={loading}
+            disabled={!email || !password || !confirmPassword}
             block
           >
             注册
