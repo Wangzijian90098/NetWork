@@ -1,5 +1,6 @@
 import { Card } from '@douyinfe/semi-ui';
 import { Coins, Zap, Key, TrendingUp } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 import { useDashboardData } from './hooks/useDashboardData';
 import UsageTrendChart from './components/UsageTrendChart';
 import ModelDistribution from './components/ModelDistribution';
@@ -8,6 +9,7 @@ import BalanceAlert from './components/BalanceAlert';
 import './Dashboard.css';
 
 function Dashboard() {
+  const { user } = useAuth();
   const {
     userInfo,
     loading,
@@ -45,6 +47,12 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
+      {user && (
+        <div className="welcome-header">
+          <h1>欢迎回来, {user.email}</h1>
+        </div>
+      )}
+
       {/* 顶部指标卡片 */}
       <div className="grid-4">
         <Card className="metric-card">

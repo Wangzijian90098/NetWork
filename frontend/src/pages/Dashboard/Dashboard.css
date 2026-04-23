@@ -4,6 +4,17 @@
   gap: 24px;
 }
 
+.welcome-header {
+  margin-bottom: 8px;
+}
+
+.welcome-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
 .loading {
   color: var(--muted);
   padding: 40px;
