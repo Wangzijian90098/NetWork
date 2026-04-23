@@ -5,36 +5,25 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 添加 User ID header (New API 需要)
-api.interceptors.request.use((config) => {
-  const userId = localStorage.getItem('userId');
-  if (userId) {
-    config.headers['New-Api-User'] = userId;
-  }
-  return config;
-});
-
 export const apiService = {
-  // 获取用户信息
-  getUserInfo: () => api.get('/user/self'),
+  // 获取使用统计
+  getUsageStats: () => api.get('/usage/stats'),
 
-  // 获取所有 Token (API Keys)
-  getTokens: () => api.get('/token'),
+  // 获取趋势数据
+  getUsageTrend: (days = 7) => api.get('/usage/trend', { params: { days } }),
 
-  // 创建 Token
-  createToken: (name, modelLimits) =>
-    api.post('/token', { name, model_limits: modelLimits }),
+  // 获取模型分布
+  getModelDistribution: () => api.get('/usage/models'),
 
-  // 删除 Token
-  deleteToken: (id) => api.delete(`/token/${id}`),
+  // 获取所有 API Keys
+  getKeys: () => api.get('/keys'),
 
-  // 获取 Token 完整 Key
-  getTokenKey: (id) => api.post(`/token/${id}/key`),
+  // 创建 API Key
+  createKey: (name) => api.post('/keys', { name }),
 
-  // 获取用量统计
-  getUsage: (start, end) =>
-    api.get('/usage', { params: { start, end } }),
+  // 删除 API Key
+  deleteKey: (id) => api.delete(`/keys/${id}`),
 
-  // 获取用户分组
-  getGroups: () => api.get('/user/self/groups'),
+  // 启用/禁用 Key
+  toggleKey: (id) => api.patch(`/keys/${id}/toggle`),
 };
