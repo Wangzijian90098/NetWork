@@ -5,24 +5,17 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import APIKeys from './pages/APIKeys';
+import Settings from './pages/Settings';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/app" element={<Layout />}>
-        <Route index element={
-          <div style={{ color: '#fff', padding: '20px' }}>
-            <h1>Welcome to NetWork AI</h1>
-          </div>
-        } />
+        <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="api-keys" element={<APIKeys />} />
-        <Route path="settings" element={
-          <div style={{ color: '#fff', padding: '20px' }}>
-            <h1>Settings</h1>
-          </div>
-        } />
+        <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />

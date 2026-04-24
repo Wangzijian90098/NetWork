@@ -1,0 +1,81 @@
+.settings {
+  padding: 24px;
+  max-width: 600px;
+}
+
+.settings h1 {
+  color: #fff;
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.settings-card {
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.form-group .semi-input-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-group {
+  margin-bottom: 16px;
+}
+
+.toggle-group label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.toggle-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #5ecc6f;
+}
+
+.toggle-desc {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  margin: 4px 0 0 30px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #5ecc6f, #3db86d) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
