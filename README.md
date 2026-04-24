@@ -175,8 +175,16 @@ docker-compose up -d --build
 ## 开发阶段
 
 - [x] 落地页已完成
-- [x] React 前端（登录/注册/控制台/API Keys/设置/文档）
-- [x] Java Spring Boot 后端已完成
+- [x] React 前端
+  - [x] 登录/注册
+  - [x] 控制台 Dashboard
+  - [x] API Keys 管理
+  - [x] 管理员后台（用户管理/平台密钥/充值）
+  - [x] 设置页面
+  - [x] API 文档
+  - [x] 移动端适配
+  - [x] 错误处理
+- [x] Java Spring Boot 后端
   - [x] 用户认证（JWT + Spring Security）
   - [x] API Key 管理
   - [x] 聊天代理服务（区域路由）
@@ -185,5 +193,7 @@ docker-compose up -d --build
   - [x] 数据初始化
 - [x] Docker 部署配置
 - [x] Cloudflare Workers 基础配置
-- [ ] 生产环境部署
-- [ ] 单元测试覆盖
+- [x] CI/CD（GitHub Actions）
+- [x] 生产环境部署（GitHub Pages）
+
+---
