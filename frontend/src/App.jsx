@@ -6,6 +6,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import APIKeys from './pages/APIKeys';
 import Settings from './pages/Settings';
+import Docs from './pages/Docs';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="api-keys" element={<APIKeys />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="docs" element={<Docs />} />
       </Route>
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />

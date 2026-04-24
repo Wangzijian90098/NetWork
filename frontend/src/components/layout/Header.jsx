@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { Button } from '@douyinfe/semi-ui';
+import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
 
 function Header() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -18,7 +20,7 @@ function Header() {
         <p>管理您的 AI API 访问</p>
       </div>
       <div className="user-chip">
-        <span className="mr-3">user@example.com</span>
+        <span className="mr-3">{user?.email || 'user@example.com'}</span>
         <Button
           size="small"
           theme="borderless"

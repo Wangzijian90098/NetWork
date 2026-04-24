@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Key, Settings } from 'lucide-react';
+import { LayoutDashboard, Key, Settings, BookOpen } from 'lucide-react';
 import './Sidebar.css';
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: '控制台' },
-  { to: '/api-keys', icon: Key, label: 'API Keys' },
-  { to: '/settings', icon: Settings, label: '设置' },
+  { to: '/app/dashboard', icon: LayoutDashboard, label: '控制台' },
+  { to: '/app/api-keys', icon: Key, label: 'API Keys' },
+  { to: '/app/docs', icon: BookOpen, label: '文档' },
+  { to: '/app/settings', icon: Settings, label: '设置' },
 ];
 
 function Sidebar() {

@@ -1,0 +1,159 @@
+.docs {
+  padding: 24px;
+  max-width: 900px;
+}
+
+.docs h1 {
+  color: #fff;
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.doc-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.doc-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.doc-card h3 {
+  color: #fff;
+  margin: 20px 0 12px;
+  font-size: 16px;
+}
+
+.doc-card p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.doc-card a {
+  color: #5ecc6f;
+  text-decoration: none;
+}
+
+.doc-card a:hover {
+  text-decoration: underline;
+}
+
+.step-list {
+  margin: 24px 0;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.step-num {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #5ecc6f, #3db86d);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.step h3 {
+  margin: 0 0 4px;
+}
+
+.step p {
+  margin: 0;
+}
+
+.code-block {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-header span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-block code {
+  color: #e0e0e0;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.model-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.model-table th,
+.model-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.model-table th {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.model-table td {
+  color: #fff;
+}
+
+.model-table code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.model-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Tabs styling */
+.semi-tabs .semi-tabs-tab {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.semi-tabs .semi-tabs-tab.semi-tabs-tab-active {
+  color: #5ecc6f !important;
+}
+
+.semi-tabs .semi-tabs-tabline {
+  background-color: #5ecc6f !important;
+}
