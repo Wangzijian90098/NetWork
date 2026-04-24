@@ -136,20 +136,54 @@ python ai_hub_backend.py  # 启动服务 http://localhost:8080
 
 ---
 
+## Docker 部署
+
+**使用 Docker Compose 一键部署：**
+
+```bash
+cd docker
+cp .env.example .env  # 编辑环境变量
+docker-compose up -d
+```
+
+访问 `http://localhost` 即可使用。
+
+**环境变量 (.env)：**
+```env
+MYSQL_ROOT_PASSWORD=your_secure_password
+```
+
+**服务端口：**
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| 前端 | 80 | React 应用 |
+| 后端 | 8080 | Java Spring Boot |
+| MySQL | 3306 | 数据库 |
+
+**停止服务：**
+```bash
+docker-compose down
+```
+
+**重新构建：**
+```bash
+docker-compose up -d --build
+```
+
+---
+
 ## 开发阶段
 
 - [x] 落地页已完成
-- [x] 控制台框架已完成
+- [x] React 前端（登录/注册/控制台/API Keys/设置/文档）
 - [x] Java Spring Boot 后端已完成
   - [x] 用户认证（JWT + Spring Security）
   - [x] API Key 管理
   - [x] 聊天代理服务（区域路由）
-  - [x] 使用统计
+  - [x] 使用统计与趋势
   - [x] 管理员功能
   - [x] 数据初始化
-- [x] Python Flask 后端已完成（备用）
-- [ ] React 前端开发中
-- [ ] 前后端完整对接
-- [ ] Cloudflare Workers 自动配置
-
----
+- [x] Docker 部署配置
+- [x] Cloudflare Workers 基础配置
+- [ ] 生产环境部署
+- [ ] 单元测试覆盖

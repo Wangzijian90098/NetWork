@@ -1,39 +1,35 @@
 version: '3.8'
 
 services:
+  # Java Spring Boot 后端
   backend:
-    image: calciumion/new-api:latest
+    build:
+      context: ../java-backend
+      dockerfile: Dockerfile
     container_name: network-ai-backend
     restart: always
-    command: --log-dir /app/logs
     ports:
-      - "3000:3000"
+      - "8080:8080"
     environment:
-      - AppID=network-ai
-      - AppKey=${APP_KEY}
-      - MasterKey=${MASTER_KEY}
-      - SQL_DSN=postgresql://root:123456@postgres:5432/new-api
-      - REDIS_CONN_STRING=redis://redis
-      - SessionSecret=${SESSION_SECRET}
-      - CRYPTO_SECRET=${CRYPTO_SECRET}
-      - InitialQuota=1000000
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/aihub?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-root123}
       - TZ=Asia/Shanghai
-      - ERROR_LOG_ENABLED=true
-      - BATCH_UPDATE_ENABLED=true
     volumes:
-      - ./data:/data
-      - ./logs:/app/logs
+      - ../java-backend/src/main/resources:/app/config
     depends_on:
-      - redis
-      - postgres
+      mysql:
+        condition: service_healthy
     networks:
       - network-ai-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
 
+  # React 前端
   frontend:
     build:
       context: ../frontend
@@ -41,34 +37,35 @@ services:
     container_name: network-ai-frontend
     restart: always
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
     networks:
       - network-ai-network
 
-  redis:
-    image: redis:7-alpine
-    container_name: network-ai-redis
-    restart: always
-    networks:
-      - network-ai-network
-
-  postgres:
-    image: postgres:15
-    container_name: network-ai-postgres
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: network-ai-mysql
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: new-api
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: aihub
+    ports:
+      - "3306:3306"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - network-ai-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  pg_data:
+  mysql_data:
 
 networks:
   network-ai-network:
