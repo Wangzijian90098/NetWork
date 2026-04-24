@@ -7,9 +7,9 @@ const api = axios.create({
 
 export const apiService = {
   // 使用统计
-  getUsageStats: () => api.get('/usage/stats'),
-  getUsageTrend: (days = 7) => api.get('/usage/trend', { params: { days } }),
-  getModelDistribution: () => api.get('/usage/models'),
+  getUsageStats: () => api.get('/v1/account/usage'),
+  getUsageTrend: (days = 7) => api.get('/v1/account/usage/trend', { params: { days } }),
+  getModelDistribution: () => api.get('/v1/account/usage/models'),
 
   // API Keys 管理
   getKeys: () => api.get('/keys'),
@@ -23,4 +23,12 @@ export const apiService = {
   register: (email, password, name) => api.post('/auth/register', { email, password, name }),
   logout: () => api.post('/auth/logout'),
   getProfile: () => api.get('/auth/me'),
+
+  // 管理员
+  adminGetUsers: () => api.get('/admin/users'),
+  adminRecharge: (userId, amount) => api.post(`/admin/users/${userId}/recharge`, { amount }),
+  adminGetPlatformKeys: () => api.get('/admin/platform-keys'),
+  adminAddPlatformKey: (data) => api.post('/admin/platform-keys', data),
+  adminDeletePlatformKey: (id) => api.delete(`/admin/platform-keys/${id}`),
+  adminSync: () => api.get('/admin/sync'),
 };

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Key, Settings, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Key, Settings, BookOpen, Shield } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
 const navItems = [
@@ -10,6 +11,9 @@ const navItems = [
 ];
 
 function Sidebar() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -32,6 +36,18 @@ function Sidebar() {
             {label}
           </NavLink>
         ))}
+
+        {isAdmin && (
+          <NavLink
+            to="/app/admin"
+            className={({ isActive }) =>
+              `sidebar-link admin-link ${isActive ? 'active' : ''}`
+            }
+          >
+            <Shield size={18} className="inline mr-3" />
+            管理后台
+          </NavLink>
+        )}
       </nav>
     </aside>
   );

@@ -1,6 +1,6 @@
 import { Card } from '@douyinfe/semi-ui';
 import { Coins, Zap, Key, TrendingUp } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { useDashboardData } from './hooks/useDashboardData';
 import UsageTrendChart from './components/UsageTrendChart';
 import ModelDistribution from './components/ModelDistribution';
