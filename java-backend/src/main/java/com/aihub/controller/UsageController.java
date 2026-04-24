@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,5 +33,24 @@ public class UsageController {
         );
 
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("/usage/trend")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getUsageTrend(
+            @RequestParam(defaultValue = "7") int days,
+            Authentication auth) {
+
+        Long userId = (Long) auth.getPrincipal();
+        List<Map<String, Object>> trend = usageService.getUsageTrend(userId, days);
+        return ResponseEntity.ok(ApiResponse.success(trend));
+    }
+
+    @GetMapping("/usage/models")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getModelDistribution(
+            Authentication auth) {
+
+        Long userId = (Long) auth.getPrincipal();
+        List<Map<String, Object>> distribution = usageService.getModelDistribution(userId);
+        return ResponseEntity.ok(ApiResponse.success(distribution));
     }
 }
