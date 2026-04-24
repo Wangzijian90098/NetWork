@@ -23,3 +23,16 @@ Thumbs.db
 backend/data/*.xdb
 backend/h2.jar
 backend/*.jar
+
+# Java / Maven
+java-backend/target/
+java-backend/*.iml
+java-backend/.mvn/
+.java-version
+
+# Node
+node_modules/
+frontend/node_modules/
+worker/node_modules/
+*.log
+npm-debug.log*
