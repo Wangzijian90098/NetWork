@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services/auth';
+import { apiService } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      const { data } = await authService.getCurrentUser();
+      const { data } = await apiService.getProfile();
       if (data.success) {
         setUser(data.data);
       }
@@ -25,21 +25,21 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
-    const { data } = await authService.login(email, password);
+    const { data } = await apiService.login(email, password);
     if (data.success) {
       await checkAuth();
     }
     return data;
   };
 
-  const register = async (email, password) => {
-    const { data } = await authService.register(email, password);
+  const register = async (email, password, name) => {
+    const { data } = await apiService.register(email, password, name);
     return data;
   };
 
   const logout = async () => {
     try {
-      await authService.logout();
+      await apiService.logout();
     } catch (err) {
       console.error('Logout failed:', err);
     } finally {

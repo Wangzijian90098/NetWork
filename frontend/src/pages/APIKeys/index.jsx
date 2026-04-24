@@ -17,7 +17,7 @@ function APIKeys() {
 
   const loadTokens = async () => {
     try {
-      const { data } = await apiService.getTokens();
+      const { data } = await apiService.getKeys();
       setTokens(data.items || []);
     } catch (err) {
       console.error(err);
@@ -30,7 +30,7 @@ function APIKeys() {
     if (!newKeyName.trim()) return;
     setCreating(true);
     try {
-      const { data } = await apiService.createToken(newKeyName);
+      const { data } = await apiService.createKey(newKeyName);
       setTokens([data, ...tokens]);
       setNewKeyName('');
       Toast.success('API Key 创建成功');
@@ -44,7 +44,7 @@ function APIKeys() {
   const handleDelete = async (id) => {
     if (!confirm('确定要删除这个 API Key 吗？')) return;
     try {
-      await apiService.deleteToken(id);
+      await apiService.deleteKey(id);
       setTokens(tokens.filter((t) => t.id !== id));
       Toast.success('删除成功');
     } catch (err) {
@@ -66,7 +66,7 @@ function APIKeys() {
       return;
     }
     try {
-      const { data } = await apiService.getTokenKey(tokenId);
+      const { data } = await apiService.getKey(tokenId);
       setRevealedKeys({ ...revealedKeys, [tokenId]: data.key });
     } catch (err) {
       Toast.error('获取 Key 失败');

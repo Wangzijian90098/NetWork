@@ -6,24 +6,21 @@ const api = axios.create({
 });
 
 export const apiService = {
-  // 获取使用统计
+  // 使用统计
   getUsageStats: () => api.get('/usage/stats'),
-
-  // 获取趋势数据
   getUsageTrend: (days = 7) => api.get('/usage/trend', { params: { days } }),
-
-  // 获取模型分布
   getModelDistribution: () => api.get('/usage/models'),
 
-  // 获取所有 API Keys
+  // API Keys 管理
   getKeys: () => api.get('/keys'),
-
-  // 创建 API Key
   createKey: (name) => api.post('/keys', { name }),
-
-  // 删除 API Key
   deleteKey: (id) => api.delete(`/keys/${id}`),
-
-  // 启用/禁用 Key
   toggleKey: (id) => api.patch(`/keys/${id}/toggle`),
+  getKey: (id) => api.get(`/keys/${id}`),
+
+  // 认证
+  login: (email, password) => api.post('/auth/login', { email, password }),
+  register: (email, password, name) => api.post('/auth/register', { email, password, name }),
+  logout: () => api.post('/auth/logout'),
+  getProfile: () => api.get('/auth/me'),
 };
