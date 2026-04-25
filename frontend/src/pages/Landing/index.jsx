@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@douyinfe/semi-ui';
-import { Terminal, Zap, Shield, Globe } from 'lucide-react';
+import { Terminal, Zap, Shield, Globe, Copy, Check } from 'lucide-react';
 import './Landing.css';
 
 const features = [
@@ -33,30 +34,35 @@ const models = [
   { name: 'DeepSeek V3', provider: 'DeepSeek', status: 'online' },
 ];
 
+const codeSnippet = `curl https://api.example.com/v1/chat/completions \\
+  -H "Authorization: Bearer sk-xxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'`;
+
 function Landing() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(codeSnippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="landing">
-      {/* Animated Grid Background */}
-      <div className="bg-grid-overlay" />
-
-      {/* Floating Orbs */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-
       {/* Navigation */}
       <nav className="landing-nav">
-        <div className="nav-brand font-display">
+        <Link to="/" className="nav-brand">
           <span className="brand-icon">N</span>
           <span className="brand-text">NETWORK<span className="text-primary">_</span>AI</span>
-        </div>
+        </Link>
         <div className="nav-links">
-          <Link to="/login" className="nav-link">
-            <span className="text-dim">→</span> 登录
-          </Link>
+          <Link to="/login" className="nav-link">登录</Link>
           <Link to="/register">
-            <Button className="btn-primary glow-on-hover">
-              立即开始
-            </Button>
+            <Button className="btn-primary">立即开始</Button>
           </Link>
         </div>
       </nav>
@@ -68,44 +74,48 @@ function Landing() {
           <span>系统已就绪</span>
         </div>
 
-        <h1 className="hero-title font-display">
-          <span className="text-dim">{'// '}</span>
+        <h1 className="hero-title">
           一站式<br />
-          <span className="gradient-text text-glow">AI 模型</span> 网关
+          <span className="gradient-text">AI 模型</span> 网关
         </h1>
 
         <p className="hero-subtitle">
           兼容 OpenAI 格式 · 支持 40+ AI 渠道 · 按量计费透明
         </p>
 
-        <div className="hero-terminal">
-          <div className="terminal-header">
-            <div className="terminal-dot dot-red" />
-            <div className="terminal-dot dot-yellow" />
-            <div className="terminal-dot dot-green" />
-            <span className="terminal-title">bash</span>
+        {/* 代码展示卡片 */}
+        <div className="code-card">
+          <div className="code-card-header">
+            <div className="code-card-dots">
+              <span className="dot dot-red" />
+              <span className="dot dot-yellow" />
+              <span className="dot dot-green" />
+            </div>
+            <span className="code-card-title">API 调用示例</span>
+            <button className="code-card-copy" onClick={handleCopy}>
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+              {copied ? '已复制' : '复制'}
+            </button>
           </div>
-          <pre className="terminal-body">
-<span className="text-secondary">$</span> curl https://api.example.com/v1/chat/completions \<br />
-&nbsp;&nbsp;-H <span className="text-success">"Authorization: Bearer sk-xxxx"</span> \<br />
-&nbsp;&nbsp;-d <span className="text-warning">'{"{"}</span><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-primary">"model"</span>: <span className="text-success">"gpt-4o"</span>,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-primary">"messages"</span>: <span className="text-warning">[{"..."}</span>]<br />
-&nbsp;&nbsp;<span className="text-warning">{'}'}</span><br /><br />
-<span className="text-dim">{'>>> '}</span><span className="cursor-blink text-primary">_</span>
-          </pre>
+          <pre className="code-card-body"><code>{`curl https://api.example.com/v1/chat/completions \\
+  -H "Authorization: Bearer sk-xxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'`}</code></pre>
         </div>
 
         <div className="hero-actions">
           <Link to="/register">
-            <Button size="large" className="btn-primary glow-on-hover">
+            <Button size="large" className="btn-primary">
               <Zap size={18} />
               免费试用
             </Button>
           </Link>
           <a href="#features">
             <Button size="large" className="btn-ghost">
-              了解更多 →
+              了解更多
             </Button>
           </a>
         </div>
@@ -113,12 +123,10 @@ function Landing() {
 
       {/* Features Section */}
       <section id="features" className="features-section">
-        <h2 className="section-title font-display">
-          <span className="text-dim">{'// '}</span>核心特性
-        </h2>
+        <h2 className="section-title">核心特性</h2>
         <div className="features-grid">
           {features.map((f) => (
-            <div key={f.title} className="feature-card neon-border">
+            <div key={f.title} className="feature-card">
               <div className="feature-icon">
                 <f.icon size={24} />
               </div>
@@ -131,17 +139,15 @@ function Landing() {
 
       {/* Models Section */}
       <section className="models-section">
-        <h2 className="section-title font-display">
-          <span className="text-dim">{'// '}</span>支持的模型
-        </h2>
+        <h2 className="section-title">支持的模型</h2>
         <div className="models-grid">
           {models.map((m) => (
             <div key={m.name} className="model-card">
               <div className="model-header">
-                <span className="model-name font-display">{m.name}</span>
+                <span className="model-name">{m.name}</span>
                 <span className={`status-badge ${m.status}`}>
                   <span className="status-dot" />
-                  {m.status === 'online' ? '在线' : '离线'}
+                  在线
                 </span>
               </div>
               <span className="model-provider">{m.provider}</span>
@@ -153,9 +159,9 @@ function Landing() {
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
-          <span className="font-mono text-dim">NETWORK_AI v1.0.0</span>
-          <span className="text-dim"> | </span>
-          <span className="text-dim">Built with ♥</span>
+          <span>NETWORK_AI v1.0.0</span>
+          <span> | </span>
+          <span>Built with</span>
         </div>
       </footer>
     </div>
