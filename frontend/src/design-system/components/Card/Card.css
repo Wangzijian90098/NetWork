@@ -1,0 +1,85 @@
+/* Card Component Styles */
+.ds-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.ds-card--hoverable:hover {
+  border-color: var(--border-glow);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.ds-card--glow {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.ds-card--top-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0.6;
+  transition: opacity var(--transition-base);
+}
+
+.ds-card--top-bar:hover::before {
+  opacity: 1;
+}
+
+.ds-card {
+  position: relative;
+}
+
+/* Glass Variant */
+.ds-card--glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Gradient Border Variant */
+.ds-card--gradient-border {
+  position: relative;
+  background: var(--bg-elevated);
+}
+
+.ds-card--gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.3;
+  transition: opacity var(--transition-base);
+}
+
+.ds-card--gradient-border:hover::before {
+  opacity: 0.8;
+}
+
+/* Card Parts */
+.ds-card__header {
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.ds-card__body {
+  padding: var(--space-lg);
+}
+
+.ds-card__footer {
+  padding: var(--space-lg);
+  border-top: 1px solid var(--border-default);
+}
