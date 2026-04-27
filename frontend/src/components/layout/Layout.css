@@ -1,92 +1,52 @@
-.console-shell {
-  min-height: 100vh;
+/* Layout Styles */
+.layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
 }
 
-.main {
-  padding: 24px;
-  background: linear-gradient(180deg, #0a0f1a 0%, #0b1220 100%);
+.layout__main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
-.main-content {
+.layout__content {
+  flex: 1;
+  padding: var(--space-lg);
   overflow-x: hidden;
 }
 
-/* 移动端 */
+.layout__overlay {
+  display: none;
+}
+
+/* Mobile */
 @media (max-width: 980px) {
-  .console-shell {
+  .layout {
     grid-template-columns: 1fr;
-    position: relative;
   }
 
-  .main {
-    padding: 16px;
-    padding-top: 70px;
-  }
-
-  .sidebar-wrapper {
+  .layout__overlay {
+    display: block;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100vh;
-    z-index: 1000;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar-wrapper.open {
-    transform: translateX(0);
-  }
-
-  .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
+    transition: all var(--transition-base);
   }
 
-  .sidebar-overlay.active {
+  .layout__overlay--active {
     opacity: 1;
     visibility: visible;
   }
 
-  .mobile-menu-btn {
-    display: flex;
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1001;
-    width: 44px;
-    height: 44px;
-    align-items: center;
-    justify-content: center;
-    background: rgba(30, 39, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: #fff;
-    cursor: pointer;
-  }
-
-  @media (min-width: 981px) {
-    .mobile-menu-btn {
-      display: none;
-    }
-
-    .sidebar-wrapper {
-      position: relative;
-      transform: none;
-    }
-
-    .sidebar-overlay {
-      display: none;
-    }
+  .layout__content {
+    padding: var(--space-md);
+    padding-top: calc(var(--header-height) + var(--space-md));
   }
 }
