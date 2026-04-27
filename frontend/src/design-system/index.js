@@ -1,10 +1,4 @@
-// Design System — Main Export
-// 统一导出所有设计系统组件
-
 export { default as Button } from './components/Button';
 export { default as Card } from './components/Card';
 export { default as Input } from './components/Input';
 export { default as Badge } from './components/Badge';
-
-// Design tokens are available via CSS variables
-// Import './styles/tokens.css' in main entry point
