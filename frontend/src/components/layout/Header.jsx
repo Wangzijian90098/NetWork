@@ -1,35 +1,38 @@
-import { useNavigate } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
-import { Button } from '@douyinfe/semi-ui';
-import { useAuth } from '../../contexts/AuthContext';
+import { Menu, Bell, Search } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import './Header.css';
 
-function Header() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
+const pathNames = {
+  '/app/dashboard': '仪表盘',
+  '/app/api-keys': 'API Keys',
+  '/app/docs': '文档',
+  '/app/settings': '设置',
+  '/app/admin': '管理后台',
+};
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
+const Header = ({ onMenuClick }) => {
+  const location = useLocation();
+  const pageName = pathNames[location.pathname] || '页面';
 
   return (
-    <header className="topbar">
-      <div className="page-title">
-        <h1>控制台</h1>
-        <p>管理您的 AI API 访问</p>
+    <header className="header">
+      <div className="header__left">
+        <button className="header__menu-btn" onClick={onMenuClick}>
+          <Menu size={20} />
+        </button>
+        <h1 className="header__title">{pageName}</h1>
       </div>
-      <div className="user-chip">
-        <span className="mr-3">{user?.email || 'user@example.com'}</span>
-        <Button
-          size="small"
-          theme="borderless"
-          icon={<LogOut size={16} />}
-          onClick={handleLogout}
-        />
+      <div className="header__right">
+        <div className="header__search">
+          <Search size={18} />
+          <input type="text" placeholder="搜索..." />
+        </div>
+        <button className="header__icon-btn">
+          <Bell size={20} />
+        </button>
       </div>
     </header>
   );
-}
+};
 
 export default Header;
