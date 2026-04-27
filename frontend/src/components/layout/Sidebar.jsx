@@ -1,56 +1,103 @@
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Key, Settings, BookOpen, Shield } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  Key,
+  FileText,
+  Settings,
+  Shield,
+  LogOut,
+  User,
+  X,
+} from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
 const navItems = [
-  { to: '/app/dashboard', icon: LayoutDashboard, label: '控制台' },
-  { to: '/app/api-keys', icon: Key, label: 'API Keys' },
-  { to: '/app/docs', icon: BookOpen, label: '文档' },
-  { to: '/app/settings', icon: Settings, label: '设置' },
+  { path: '/app/dashboard', icon: LayoutDashboard, label: '仪表盘' },
+  { path: '/app/api-keys', icon: Key, label: 'API Keys' },
+  { path: '/app/docs', icon: FileText, label: '文档' },
+  { path: '/app/settings', icon: Settings, label: '设置' },
 ];
 
-function Sidebar() {
-  const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+const adminItems = [
+  { path: '/app/admin', icon: Shield, label: '管理后台', adminOnly: true },
+];
+
+const Sidebar = ({ isOpen, onClose }) => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
-    <aside className="sidebar">
-      <div className="brand">
-        <div className="brand-badge">
-          <span className="text-white font-bold">N</span>
+    <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
+      <div className="sidebar__inner">
+        {/* Brand */}
+        <div className="sidebar__brand">
+          <div className="sidebar__logo">
+            <span>N</span>
+          </div>
+          <span className="sidebar__title">AI NetWork</span>
+          <button className="sidebar__close" onClick={onClose}>
+            <X size={20} />
+          </button>
         </div>
-        <span>NetWork AI</span>
+
+        {/* Navigation */}
+        <nav className="sidebar__nav">
+          {navItems.map(({ path, icon: Icon, label }) => (
+            <NavLink
+              key={path}
+              to={path}
+              className={({ isActive }) =>
+                `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`
+              }
+              onClick={onClose}
+            >
+              <Icon size={20} />
+              <span>{label}</span>
+            </NavLink>
+          ))}
+
+          {user?.role === 'admin' && (
+            <div className="sidebar__divider" />
+          )}
+          {user?.role === 'admin' && adminItems.map(({ path, icon: Icon, label }) => (
+            <NavLink
+              key={path}
+              to={path}
+              className={({ isActive }) =>
+                `sidebar__link sidebar__link--admin ${isActive ? 'sidebar__link--active' : ''}`
+              }
+              onClick={onClose}
+            >
+              <Icon size={20} />
+              <span>{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* User */}
+        <div className="sidebar__footer">
+          <div className="sidebar__user">
+            <div className="sidebar__avatar">
+              <User size={18} />
+            </div>
+            <div className="sidebar__user-info">
+              <span className="sidebar__user-name">{user?.name || '用户'}</span>
+              <span className="sidebar__user-email">{user?.email || ''}</span>
+            </div>
+          </div>
+          <button className="sidebar__logout" onClick={handleLogout} title="退出登录">
+            <LogOut size={18} />
+          </button>
+        </div>
       </div>
-
-      <nav className="sidebar-nav">
-        {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''}`
-            }
-          >
-            <Icon size={18} className="inline mr-3" />
-            {label}
-          </NavLink>
-        ))}
-
-        {isAdmin && (
-          <NavLink
-            to="/app/admin"
-            className={({ isActive }) =>
-              `sidebar-link admin-link ${isActive ? 'active' : ''}`
-            }
-          >
-            <Shield size={18} className="inline mr-3" />
-            管理后台
-          </NavLink>
-        )}
-      </nav>
     </aside>
   );
-}
+};
 
 export default Sidebar;
