@@ -15,12 +15,13 @@
 NetWork/
 ├── frontend/              # React 前端应用
 │   ├── src/
-│   │   ├── components/    # UI 组件
-│   │   ├── pages/         # 页面组件
-│   │   ├── services/      # API 服务
-│   │   ├── hooks/         # React Hooks
-│   │   ├── i18n/          # 国际化
-│   │   └── styles/        # 样式文件
+│   │   ├── design-system/  # 设计系统组件库
+│   │   │   ├── components/ # Button, Card, Input, Badge
+│   │   │   └── styles/     # tokens, animations, utilities
+│   │   ├── components/     # 业务组件
+│   │   ├── pages/          # 页面组件
+│   │   ├── styles/         # 全局样式
+│   │   └── ...
 │   └── dist/              # 构建输出
 │
 ├── java-backend/          # Java Spring Boot 后端（主服务）
